@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Betonlieferscheine</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Beton-LS">
+<meta name="theme-color" content="#1f2a33">
+<style>
+:root{
+  --bg:#f4f2ee; --card:#ffffff; --ink:#1d2329; --mute:#66707a; --line:#d9d5ce;
+  --acc:#1f5f8b; --acc-ink:#fff; --head:#1f2a33; --head-ink:#f4f2ee;
+  --rot:#c0392b; --gelb:#d4a017; --gruen:#2e8b57; --grau:#8a9299;
+  --uns:#fff4cc; --uns-line:#d4a017; --field:#fbfaf8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15191d; --card:#1e2429; --ink:#e8e6e1; --mute:#9aa3ab; --line:#333c44;
+    --acc:#5aa3d6; --acc-ink:#0d1a24; --head:#0f1316; --head-ink:#e8e6e1;
+    --uns:#3a3214; --uns-line:#d4a017; --field:#181d21;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+header.top{position:sticky;top:0;z-index:10;background:var(--head);color:var(--head-ink);padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;display:flex;align-items:center;gap:10px}
+header.top a{color:var(--head-ink);text-decoration:none;font-size:22px;line-height:1;padding:4px 8px 4px 0}
+header.top h1{font-size:17px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{padding:12px 16px calc(env(safe-area-inset-bottom) + 90px);max-width:900px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:0 0 12px}
+.card h2{font-size:15px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--mute)}
+label.f em{color:var(--uns-line);font-style:normal;font-weight:600}
+label.f.uns input,label.f.uns select{background:var(--uns);border-color:var(--uns-line)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-height:42px}
+textarea{min-height:70px}
+input[type=checkbox]{width:22px;height:22px;min-height:0}
+label.cb{display:flex;align-items:center;gap:8px;font-size:15px;padding:6px 0}
+.tm{display:flex;gap:6px}.tm input{flex:1}
+button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:9px 14px;min-height:42px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button.p,.btn.p{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+button.d{color:var(--rot);border-color:var(--rot)}
+button.s{padding:4px 10px;min-height:34px;font-size:14px}
+.fab{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom) + 16px);z-index:20;box-shadow:0 4px 14px rgba(0,0,0,.25);font-size:17px;padding:14px 20px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding-bottom:2px}
+.tabs a{white-space:nowrap;padding:8px 12px;border-radius:20px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px;background:var(--card)}
+.tabs a.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.list a.item,.list div.item{display:flex;gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
+.list .item:last-child{border-bottom:0}
+.item .t{flex:1;min-width:0}
+.item .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mute{color:var(--mute);font-size:13px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;background:var(--grau)}
+.dot.rot{background:var(--rot)}.dot.gelb{background:var(--gelb)}.dot.gruen{background:var(--gruen)}
+.badge{font-size:12px;padding:2px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap}
+.badge.rot{border-color:var(--rot);color:var(--rot)}.badge.gelb{border-color:var(--gelb);color:var(--gelb)}.badge.gruen{border-color:var(--gruen);color:var(--gruen)}
+ul.chk{list-style:none;margin:0;padding:0}
+ul.chk li{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:14px}
+ul.chk li .dot{margin-top:4px}
+.grp{margin:14px 0 4px;font-weight:600;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.grp a{font-weight:400;font-size:14px;color:var(--acc)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.thumbs div{position:relative}
+.thumbs img{width:84px;height:110px;object-fit:cover;border-radius:6px;border:1px solid var(--line)}
+.thumbs .pdf{display:flex;align-items:center;justify-content:center;width:84px;height:110px;border-radius:6px;border:1px solid var(--line);color:var(--rot);font-weight:700;background:var(--bg)}
+.thumbs button{position:absolute;top:2px;right:2px;min-height:0;padding:0 7px;font-size:14px}
+.banner{background:var(--uns);border:1px solid var(--uns-line);border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid var(--line);padding:4px 5px;text-align:left;vertical-align:top}
+th{background:var(--bg)}
+td.n,th.n{text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+.wlist{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.wlist span{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:3px 8px;font-size:14px}
+.wlist span button{min-height:0;padding:0 4px;border:0;background:none;color:var(--rot)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.sum div{background:var(--bg);border-radius:8px;padding:8px}
+.sum b{display:block;font-size:18px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 80px);transform:translateX(-50%);background:var(--head);color:var(--head-ink);padding:10px 16px;border-radius:20px;z-index:50;font-size:14px;max-width:90vw}
+.doc h3{margin:14px 0 6px;font-size:15px}
+.doc .kopf{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 16px;font-size:14px}
+.doc input.pl{border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;min-height:30px;padding:3px 2px}
+.sig{display:flex;gap:30px;margin-top:30px}.sig div{flex:1;border-top:1px solid var(--ink);padding-top:4px;font-size:12px}
+.pb{page-break-before:always}
+@media print{
+  :root{--bg:#fff;--card:#fff;--ink:#000;--mute:#444;--line:#999}
+  header.top,.noprint,.fab,.tabs,.toast{display:none!important}
+  main{padding:0;max-width:none}
+  .card{border:0;padding:0;margin:0 0 8px}
+  table{font-size:10px}
+  body{font-size:12px}
+  @page{size:A4 landscape;margin:10mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  input::placeholder,textarea::placeholder{color:transparent}
+  input.leer{color:transparent}
+}
+</style>
+</head>
+<body>
+<header class="top"><a id="back" href="#/" aria-label="Zurück">‹</a><h1 id="title">Betonlieferscheine</h1><a href="#/einstellungen" aria-label="Einstellungen">⚙︎</a></header>
+<main id="app"></main>
+<script>
+"use strict";
+/* ================= Hilfsfunktionen ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const num = v => { if (v === '' || v == null) return null; const n = Number(String(v).replace(',', '.')); return isNaN(n) ? null : n; };
+const fmt = (n, d = 1) => n == null ? '–' : n.toLocaleString('de-DE', {minimumFractionDigits: d, maximumFractionDigits: 2});
+const fdat = d => d ? d.split('-').reverse().join('.') : '–';
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
+const nowTime = () => { const d = new Date(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); };
+const toMin = t => { if (!t || !/^\d{1,2}:\d{2}/.test(t)) return null; const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+const diffMin = (a, b) => { const x = toMin(a), y = toMin(b); if (x == null || y == null) return null; let d = y - x; if (d < 0) d += 1440; return d; };
+const norm = s => String(s || '').toUpperCase().replace(/\s+/g, '').replace(/[–—]/g, '-');
+const expoSet = s => new Set(String(s || '').toUpperCase().replace(/\s+/g, '').split(/[,;/+]|(?=X)/).filter(x => /^X/.test(x)));
+const addDays = (d, n) => { const x = new Date(d + 'T12:00'); x.setDate(x.getDate() + n); return x.toISOString().slice(0, 10); };
+function toast(msg) { document.querySelectorAll('.toast').forEach(x => x.remove()); const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+function download(name, data, type) { const b = data instanceof Blob ? data : new Blob([data], {type}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+
+/* ================= Lokale Datenbank (IndexedDB) ================= */
+const STORES = ['projects', 'sorten', 'bauteile', 'ls', 'photos', 'betonagen', 'meta'];
+let dbp;
+function openDB() {
+  if (dbp) return dbp;
+  dbp = new Promise((res, rej) => {
+    const r = indexedDB.open('bauleiter-app', 1);
+    r.onupgradeneeded = () => { const d = r.result; for (const s of STORES) if (!d.objectStoreNames.contains(s)) d.createObjectStore(s, {keyPath: 'id'}); };
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  return dbp;
+}
+async function tx(store, mode, fn) {
+  const d = await openDB();
+  return new Promise((res, rej) => {
+    const t = d.transaction(store, mode); const st = t.objectStore(store); let out;
+    const r = fn(st); if (r) r.onsuccess = () => { out = r.result; };
+    t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  });
+}
+const db = {
+  all: s => tx(s, 'readonly', st => st.getAll()),
+  get: (s, id) => tx(s, 'readonly', st => st.get(id)),
+  put: (s, o) => tx(s, 'readwrite', st => st.put(o)),
+  del: (s, id) => tx(s, 'readwrite', st => st.delete(id)),
+  clear: s => tx(s, 'readwrite', st => st.clear()),
+};
+const S = {projects: [], sorten: [], bauteile: [], ls: [], betonagen: [], settings: {}};
+async function load() {
+  for (const s of ['projects', 'sorten', 'bauteile', 'ls', 'betonagen']) S[s] = await db.all(s);
+  S.settings = (await db.get('meta', 'settings')) || {id: 'settings', model: 'claude-sonnet-5-5'};
+}
+async function saveSettings() { await db.put('meta', S.settings); }
+const P = id => S.projects.find(p => p.id === id);
+const sorteById = id => S.sorten.find(s => s.id === id);
+const btById = id => S.bauteile.find(b => b.id === id);
+const lsOf = pid => S.ls.filter(l => l.projectId === pid);
+const aktiv = l => !l.zurueckgewiesen;
+
+/* ================= Prüfregeln ================= */
+const REGELN = {
+  zeitMischer: 90, zeitOhne: 45, tMax: 30, tMin: 5, tMinKalt: 10, luftKalt: -3,
+  quelle: 'DIN EN 13670 / DIN 1045-3, DIN 1045-2'
+};
+function lsWetter(l) {
+  const b = S.betonagen.find(x => x.id === bKey(l.projectId, l.bauteilId, l.datum));
+  const w = b?.wetter?.[l.datum]; if (!w) return null;
+  const h = toMin(l.zeitEntladeBeginn || l.zeitAnkunft);
+  return {min: w.min, max: w.max, stunde: h != null && w.hourly ? w.hourly[Math.floor(h / 60)] : null};
+}
+function pruefe(l, p) {
+  const r = []; const add = (lvl, txt) => r.push({lvl, txt});
+  if (l.zurueckgewiesen) { add('grau', 'Zurückgewiesen' + (l.grund ? ': ' + l.grund : '') + ' – zählt nicht zur Menge'); return r; }
+  const s = sorteById(l.sorteId);
+  if (l.bestaetigt === false) add('gelb', 'Importiert – noch nicht geprüft und bestätigt');
+  if (!l.bauteilId) add('gelb', 'Kein Bauteil zugeordnet');
+  if (l.lsSortennr && !S.sorten.some(x => x.projectId === l.projectId && sortenNrGleich(x.sortennr, l.lsSortennr))) add('rot', `Sorte ${l.lsSortennr} steht nicht im Sortenverzeichnis des Projekts – Freigabe prüfen`);
+  if (!s) add('gelb', 'Keine Sorte aus dem Sortenverzeichnis zugeordnet');
+  else {
+    if (s.werk && l.werk && !werkPasst(s.werk, l.werk)) add('gelb', `Sorte aus dem Verzeichnis von ${s.werk}, geliefert von ${l.werk}`);
+    if (l.lsFeuchte && s.feuchte && norm(l.lsFeuchte) !== norm(s.feuchte)) add('rot', `Feuchtigkeitsklasse ${l.lsFeuchte} ≠ Verzeichnis ${s.feuchte}`);
+    if (s.uek && p && Number(s.uek) > Number(p.uek)) add('gelb', `Sorte ist ÜK ${s.uek}, Projekt steht auf ÜK ${p.uek}`);
+    if (l.lsFestigkeit && s.festigkeit && norm(l.lsFestigkeit) !== norm(s.festigkeit)) add('rot', `Festigkeitsklasse ${l.lsFestigkeit} ≠ bestellt ${s.festigkeit}`);
+    if (l.lsKonsistenz && s.konsistenz && norm(l.lsKonsistenz) !== norm(s.konsistenz)) add('rot', `Konsistenzklasse ${l.lsKonsistenz} ≠ bestellt ${s.konsistenz}`);
+    if (l.lsExposition && s.exposition) { const ist = expoSet(l.lsExposition); const fehlt = [...expoSet(s.exposition)].filter(x => !ist.has(x)); if (fehlt.length) add('rot', `Expositionsklasse fehlt auf LS: ${fehlt.join(', ')}`); }
+    if (l.lsSortennr && s.sortennr && !sortenNrGleich(l.lsSortennr, s.sortennr)) add('gelb', `Sortennummer ${l.lsSortennr} ≠ Verzeichnis ${s.sortennr}`);
+    if (!l.lsFestigkeit && !l.lsKonsistenz && !l.lsExposition) add('gelb', 'Klassen vom Lieferschein nicht eingetragen – Sorte nicht geprüft');
+  }
+  if (num(l.menge) == null) add('gelb', 'Menge fehlt');
+  const verl = num(l.verlaengertMin) || 0;
+  const lim = (l.fahrzeugTyp === 'ohne' ? REGELN.zeitOhne : REGELN.zeitMischer) + verl;
+  const ende = l.zeitEntladeEnde || null;
+  const d = diffMin(l.zeitBeladung, ende);
+  if (d == null) add('gelb', 'Zeiten unvollständig (Beladung Werk bis Entladeende)');
+  else if (d > lim) add('rot', `${d} min von Beladung bis Entladeende – zulässig ${lim} min${verl ? ' (inkl. Verlängerung lt. LS)' : ''}`);
+  else if (d > lim - 10) add('gelb', `${d} min von Beladung bis Entladeende – knapp unter ${lim} min`);
+  if (l.unterschrift === 'nein') add('gelb', 'Lieferschein nicht von der Baustelle unterschrieben (Annahme nicht bestätigt)');
+  const st = diffMin(l.zeitAnkunft, l.zeitEntladeBeginn);
+  if (st != null && st > 30) add('gelb', `Standzeit ${st} min (Ankunft bis Entladebeginn)`);
+  if (l.wasserBaustelle) add('rot', 'Wasserzugabe auf der Baustelle' + (num(l.wasserLiter) ? ` (${l.wasserLiter} l)` : '') + ' – nicht zulässig');
+  if (l.fliessmittel && !l.fliessmittelVermerk) add('rot', 'Fließmittel auf der Baustelle ohne Vermerk auf dem Lieferschein');
+  else if (l.fliessmittel) add('gelb', 'Fließmittel auf der Baustelle zugegeben (Vermerk vorhanden) – Mischzeit beachten');
+  const t = num(l.tempFrisch); const w = lsWetter(l);
+  if (t == null) { if (w && (w.min < 5 || w.max > 30)) add('gelb', `Frischbetontemperatur fehlt – bei Luft unter +5 °C bzw. über +30 °C messen`); else add('info', 'Frischbetontemperatur nicht eingetragen'); }
+  else {
+    if (t > REGELN.tMax) add('rot', `Frischbeton ${fmt(t)} °C > ${REGELN.tMax} °C`);
+    if (t < REGELN.tMin) add('rot', `Frischbeton ${fmt(t)} °C < ${REGELN.tMin} °C`);
+    else if (w && w.min != null && w.min < REGELN.luftKalt && t < REGELN.tMinKalt) add('rot', `Luft unter ${REGELN.luftKalt} °C: Frischbeton mind. ${REGELN.tMinKalt} °C nötig`);
+    else if (w && w.min != null && w.min < 5 && t < REGELN.tMinKalt) add('gelb', `Luft unter +5 °C: bei Zement < 240 kg/m³ oder LH-Zement mind. ${REGELN.tMinKalt} °C nötig`);
+  }
+  if (p?.lieferadresse && l.lsAdresse) { const a = norm(p.lieferadresse).replace(/[^A-Z0-9]/g, ''), b = norm(l.lsAdresse).replace(/[^A-Z0-9]/g, ''); if (a && b && !a.includes(b) && !b.includes(a)) add('gelb', 'Lieferadresse weicht von der Projektadresse ab'); }
+  if (l.unsicher?.length) add('gelb', `${l.unsicher.length} Feld(er) von KI unsicher gelesen – bitte prüfen`);
+  if (!r.some(x => x.lvl !== 'info')) add('gruen', 'Alle Prüfungen ohne Befund');
+  return r;
+}
+function sortenNrGleich(a, b) { const f = x => norm(x).replace(/\(?JBL\)?$/, '').replace(/[^A-Z0-9]/g, ''); return !!a && !!b && f(a) === f(b); }
+function werkPasst(sw, lw) { const w = String(lw).toLowerCase(); return String(sw).toLowerCase().split(/[^a-zäöüß0-9]+/).filter(x => x.length >= 4 && !['beton', 'werk', 'gmbh'].includes(x)).some(x => w.includes(x)); }
+function findeSorte(pid, l) {
+  const ss = S.sorten.filter(x => x.projectId === pid);
+  let c = l.lsSortennr ? ss.filter(x => sortenNrGleich(x.sortennr, l.lsSortennr)) : [];
+  if (c.length > 1 && l.werk) { const w = c.filter(x => werkPasst(x.werk, l.werk)); if (w.length) c = w; }
+  if (!c.length && l.lsFestigkeit) c = ss.filter(x => norm(x.festigkeit) === norm(l.lsFestigkeit) && norm(x.konsistenz) === norm(l.lsKonsistenz) && [...expoSet(x.exposition)].every(e => expoSet(l.lsExposition).has(e)) && (!l.werk || !x.werk || werkPasst(x.werk, l.werk)));
+  return c.length === 1 ? c[0].id : '';
+}
+const sorteLabel = s => s ? `${s.bez || s.sortennr}${s.werk ? ' · ' + s.werk : ''}` : '';
+const ampel = r => r.some(x => x.lvl === 'rot') ? 'rot' : r.some(x => x.lvl === 'gelb') ? 'gelb' : r.some(x => x.lvl === 'grau') ? 'grau' : 'gruen';
+const chkHtml = r => `<ul class="chk">${r.map(x => `<li><span class="dot ${x.lvl}"></span><span>${esc(x.txt)}</span></li>`).join('')}</ul>`;
+
+/* ================= Würfel ================= */
+const WREGEL = {
+  neu: '1 Probekörper je 100 m³, mind. 1 je Betoniertag (MPA BAU Leitfaden ÜK 2, 04/2026)',
+  alt: '3 Proben je 300 m³ oder je 3 Betoniertage, die größere Zahl (DIN 1045-3, ÜK 2)',
+  eigen: 'Eigene Regel (Vertrag/LV)'
+};
+function wuerfelSoll(p, list) {
+  const a = list.filter(aktiv); const total = a.reduce((s, l) => s + (num(l.menge) || 0), 0); const tage = new Set(a.map(l => l.datum)).size;
+  if (!a.length) return 0;
+  if (p.uek === '1') return 0;
+  if (p.wRegel === 'alt') return Math.max(3 * Math.ceil(total / 300), 3 * Math.ceil(tage / 3));
+  if (p.wRegel === 'eigen') { const m = num(p.wM3) || 100, t = num(p.wTag) || 0; return Math.max(Math.ceil(total / m), tage * t); }
+  return Math.max(Math.ceil(total / 100), tage);
+}
+const wuerfelIst = list => list.reduce((s, l) => s + (l.wuerfel?.length || 0), 0);
+
+/* ================= Wetter (Open-Meteo, ohne Schlüssel) ================= */
+async function geocode(name) {
+  const r = await fetch('https://geocoding-api.open-meteo.com/v1/search?count=5&language=de&name=' + encodeURIComponent(name));
+  const j = await r.json(); return j.results || [];
+}
+async function holeWetter(p, von, bis) {
+  if (p.lat == null) throw new Error('Für das Projekt ist kein Ort mit Koordinaten hinterlegt');
+  const alt = (new Date() - new Date(von + 'T00:00')) / 864e5 > 60;
+  const base = alt ? 'https://archive-api.open-meteo.com/v1/archive' : 'https://api.open-meteo.com/v1/forecast';
+  const url = `${base}?latitude=${p.lat}&longitude=${p.lon}&start_date=${von}&end_date=${bis}&daily=temperature_2m_max,temperature_2m_min&hourly=temperature_2m&timezone=Europe%2FBerlin`;
+  const r = await fetch(url); const j = await r.json();
+  if (j.error) throw new Error(j.reason || 'Wetterdienst-Fehler');
+  const out = {};
+  (j.daily?.time || []).forEach((d, i) => { out[d] = {min: j.daily.temperature_2m_min[i], max: j.daily.temperature_2m_max[i], hourly: (j.hourly?.temperature_2m || []).slice(i * 24, i * 24 + 24)}; });
+  return out;
+}
+const bKey = (pid, btid, datum) => `${pid}|${btid || '-'}|${datum}`;
+async function betonage(pid, btid, datum) {
+  const id = bKey(pid, btid, datum);
+  return S.betonagen.find(b => b.id === id) || {id, projectId: pid, bauteilId: btid, datum, wetter: {}};
+}
+async function saveBetonage(b) { await db.put('betonagen', b); await load(); }
+
+/* ================= Fotos ================= */
+function verkleinere(file, maxKante = 2000, q = 0.75) {
+  if (file.type === 'application/pdf') return file.size > 20 * 1048576 ? Promise.reject(new Error('PDF größer als 20 MB')) : Promise.resolve(file);
+  return new Promise((res, rej) => {
+    const img = new Image(); const u = URL.createObjectURL(file);
+    img.onload = () => { const f = Math.min(1, maxKante / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * f); c.height = Math.round(img.height * f); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); c.toBlob(b => b ? res(b) : rej(new Error('Bild konnte nicht verarbeitet werden')), 'image/jpeg', q); };
+    img.onerror = () => { URL.revokeObjectURL(u); rej(new Error('Bild konnte nicht gelesen werden')); };
+    img.src = u;
+  });
+}
+const blobToB64 = b => new Promise(res => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.readAsDataURL(b); });
+const b64ToBlob = (b64, type = 'image/jpeg') => { const bin = atob(b64); const a = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return new Blob([a], {type}); };
+
+/* ================= KI-Auslesen (Claude API, eigener Schlüssel) ================= */
+const KI_FELDER = {
+  lsNr: 'Lieferscheinnummer (LS-Nr.)', datum: 'Lieferdatum im Format JJJJ-MM-TT', werk: 'Lieferwerk (Firma + Werksort, z. B. "GROSS-th-beton Saarlouis", "Mobil-Beton Rehlingen", "Dyckerhoff Dillingen")',
+  fahrzeug: 'Kfz-Kennzeichen, sonst Fahrzeugnummer', auftragNr: 'Auftragsnummer, falls vorhanden',
+  lsSortennr: 'Sortennummer: bei GROSS-th "Sorte", bei Mobil-Beton "Schlüssel-/Abrufnummer", bei Dyckerhoff "Artikelnummer"', lsFestigkeit: 'Druckfestigkeitsklasse, z. B. C30/37',
+  lsExposition: 'alle Expositionsklassen, kommagetrennt, z. B. XC4, XF1 (Zusätze wie (WU) weglassen)', lsKonsistenz: 'Konsistenzklasse, z. B. F3', lsFeuchte: 'Feuchtigkeitsklasse WO/WF/WA/WS', groesstkorn: 'Größtkorn in mm',
+  menge: 'Menge dieses Fahrzeugs in m³ (nicht kumuliert)', bestellmengeLS: 'Bestellmenge bzw. Soll in m³', mengeKum: 'bisher geliefert bzw. Ist in m³ (kumuliert, inkl. dieses Fahrzeugs)', restLS: 'Rest in m³',
+  zeitBeladung: 'Beladezeit im Werk / Uhrzeit Beladung / Beladung im Werk, HH:MM', zeitAnkunft: 'Ankunft Baustelle, HH:MM', zeitEntladeBeginn: 'Entladebeginn, HH:MM', zeitEntladeEnde: 'Entladeende, HH:MM',
+  verlaengertMin: 'Verlängerung der Verarbeitbarkeitszeit in Minuten, falls angegeben (z. B. "verlängert um 02:00" = 120)',
+  wasserLiter: 'auf der Baustelle zugegebenes Wasser in Litern (Feld "Wasserzugabe … l/Fahrzeug" o. ä.)', fliessmittel: 'nachträgliche Zugabe von Fließmittel/Verzögerer auf der Baustelle vermerkt (true/false)',
+  tempFrisch: 'Frischbetontemperatur in °C, falls eingetragen (nicht die Lufttemperatur des Werks)', unterschrift: 'Unterschrift des Abnehmers/der Baustelle vorhanden ("ja"/"nein"); "nein" auch bei Vermerk wie "Ohne Unterschrift"',
+  lsAdresse: 'Baustellen-/Lieferadresse'
+};
+async function kiAuslesen(blobs) {
+  const key = S.settings.apiKey; if (!key) throw new Error('Kein API-Schlüssel hinterlegt (Einstellungen)');
+  const felder = Object.entries(KI_FELDER).map(([k, v]) => `"${k}": ${v}`).join('\n');
+  const text = `Du liest deutsche Betonlieferscheine (Transportbeton) aus. Die Dateien können einen oder mehrere Lieferscheine enthalten; bei PDFs ist meist jede Seite ein eigener Lieferschein. Mehrere Fotos derselben LS-Nr. gehören zu einem Lieferschein.
+Gib NUR JSON zurück, ohne weiteren Text: {"lieferscheine": [ {Felder…}, … ]}
+Für jedes Feld: {"wert": ..., "sicher": true|false}.
+Regeln:
+- Nichts raten. Fehlt ein Feld oder ist es unleserlich: {"wert": null, "sicher": false}.
+- "sicher": false bei Handschrift, Verdeckung, Unschärfe oder Mehrdeutigkeit.
+- Zahlen mit Punkt als Dezimaltrenner. Uhrzeiten als "HH:MM".
+- Zusätzlich je Lieferschein "hinweise": kurzer Text zu Auffälligkeiten (handschriftliche Vermerke wörtlich, fehlende Unterschrift, Wasser-/Fließmittelvermerk), sonst null.
+Felder:
+${felder}`;
+  const content = [];
+  for (const b of blobs) {
+    const data = await blobToB64(b);
+    if (b.type === 'application/pdf') content.push({type: 'document', source: {type: 'base64', media_type: 'application/pdf', data}});
+    else content.push({type: 'image', source: {type: 'base64', media_type: 'image/jpeg', data}});
+  }
+  content.push({type: 'text', text});
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true'},
+    body: JSON.stringify({model: S.settings.model || 'claude-sonnet-5-5', max_tokens: 8000, messages: [{role: 'user', content}]})
+  });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j?.error?.message || ('API-Fehler ' + r.status));
+  const out = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('');
+  const m = out.match(/\{[\s\S]*\}/); if (!m) throw new Error('Antwort der KI war kein JSON');
+  const res = JSON.parse(m[0]);
+  return Array.isArray(res.lieferscheine) ? res.lieferscheine : [res];
+}
+/* KI-Ergebnis in einen Lieferschein-Entwurf übernehmen */
+function kiUebernehmen(F, j) {
+  let n = 0; F.unsicher = F.unsicher || [];
+  for (const k of Object.keys(KI_FELDER)) { const v = j[k]; if (!v || v.wert == null || v.wert === '') continue;
+    if (k === 'wasserLiter') { if (num(v.wert)) { F.wasserBaustelle = true; F.wasserLiter = String(v.wert); } else continue; }
+    else if (k === 'fliessmittel') { F.fliessmittel = v.wert === true || v.wert === 'true'; if (F.fliessmittel) F.fliessmittelVermerk = true; }
+    else if (k === 'unterschrift') { const w = String(v.wert).toLowerCase(); F.unterschrift = (w === 'ja' || w === 'true') ? 'ja' : (w === 'nein' || w === 'false') ? 'nein' : ''; }
+    else F[k] = String(v.wert);
+    n++; if (v.sicher === false && !F.unsicher.includes(k)) F.unsicher.push(k); }
+  if (j.hinweise) F.kiHinweis = typeof j.hinweise === 'object' ? (j.hinweise.wert || '') : j.hinweise;
+  const sid = findeSorte(F.projectId, F); if (sid) F.sorteId = sid;
+  return n;
+}
+async function fotoLoeschenWennFrei(id, ausserLs) { if (!S.ls.some(l => l.id !== ausserLs && (l.photoIds || []).includes(id))) await db.del('photos', id); }
+
+/* ================= Router ================= */
+let F = null, pending = {}; // Lieferschein-Entwurf
+function setHead(title, back) { $('#title').textContent = title; const b = $('#back'); b.href = back || '#/'; b.style.visibility = back === null ? 'hidden' : 'visible'; }
+async function render() {
+  const h = location.hash.replace(/^#\/?/, ''); const [path, qs] = h.split('?'); const parts = path.split('/').filter(Boolean);
+  const q = new URLSearchParams(qs || '');
+  const app = $('#app'); window.scrollTo(0, 0);
+  try {
+    if (!parts.length) return viewHome(app);
+    if (parts[0] === 'einstellungen') return viewSettings(app);
+    if (parts[0] === 'p') {
+      if (parts[1] === 'neu') return viewProjektForm(app, null);
+      const p = P(parts[1]); if (!p) { location.hash = '#/'; return; }
+      if (!parts[2]) return viewProjekt(app, p, 'ls');
+      if (parts[2] === 'tab') return viewProjekt(app, p, parts[3]);
+      if (parts[2] === 'bearbeiten') return viewProjektForm(app, p);
+      if (parts[2] === 'ls') return viewLS(app, p, parts[3], q);
+      if (parts[2] === 'sorte') return viewSorte(app, p, parts[3]);
+      if (parts[2] === 'bauteil') return viewBauteil(app, p, parts[3]);
+      if (parts[2] === 'prot') return viewProtokoll(app, p, parts[3], parts[4]);
+      if (parts[2] === 'paket') return viewPaket(app, p);
+      if (parts[2] === 'import') return viewImport(app, p);
+    }
+    location.hash = '#/';
+  } catch (e) { console.error(e); app.innerHTML = `<div class="card">Fehler: ${esc(e.message)}</div>`; }
+}
+window.addEventListener('hashchange', render);
+
+/* ================= Ansichten ================= */
+function sicherungsBanner() {
+  const lb = S.settings.lastBackup; const tage = lb ? Math.floor((Date.now() - lb) / 864e5) : null;
+  if (!S.ls.length) return '';
+  if (tage == null || tage >= 7) return `<div class="banner noprint">Daten liegen nur auf diesem Gerät. ${tage == null ? 'Noch keine Sicherung.' : `Letzte Sicherung vor ${tage} Tagen.`} <a href="#/einstellungen">Jetzt sichern</a></div>`;
+  return '';
+}
+function viewHome(app) {
+  setHead('Betonlieferscheine', null);
+  const ps = [...S.projects].sort((a, b) => (b.created || 0) - (a.created || 0));
+  app.innerHTML = sicherungsBanner() + `<div class="card"><h2>Projekte</h2><div class="list">${ps.length ? ps.map(p => { const l = lsOf(p.id); const last = l.map(x => x.datum).sort().pop(); return `<a class="item" href="#/p/${p.id}"><div class="t"><b>${esc(p.name)}</b><span class="mute">${esc(p.ort || '')} · ÜK ${esc(p.uek)} · ${l.length} Lieferscheine${last ? ' · zuletzt ' + fdat(last) : ''}</span></div>›</a>`; }).join('') : '<p class="mute">Noch kein Projekt angelegt.</p>'}</div></div>
+  <a class="btn p fab" href="#/p/neu">+ Projekt</a>`;
+}
+function viewProjektForm(app, p) {
+  const n = !p; p = p || {uek: '2', wRegel: 'neu', wPrefix: 'W', wNext: 1};
+  setHead(n ? 'Neues Projekt' : 'Projekt bearbeiten', n ? '#/' : `#/p/${p.id}`);
+  app.innerHTML = `<form id="pf" class="card">
+    <div class="grid">
+      <label class="f"><span>Projektname *</span><input name="name" required value="${esc(p.name)}"></label>
+      <label class="f"><span>Projekt-Nr.</span><input name="nr" value="${esc(p.nr)}"></label>
+    </div>
+    <label class="f" style="margin-top:8px"><span>Lieferadresse (für Abgleich mit dem Lieferschein)</span><input name="lieferadresse" value="${esc(p.lieferadresse)}"></label>
+    <div class="row" style="margin-top:8px;align-items:flex-end"><label class="f" style="flex:1"><span>Ort für Wetterdaten</span><input name="ort" value="${esc(p.ort)}"></label><button type="button" data-act="geo">Ort suchen</button></div>
+    <div id="geo" class="mute">${p.lat != null ? `Koordinaten: ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}` : 'Noch keine Koordinaten – ohne sie keine Wetterdaten.'}</div>
+    <div class="grid" style="margin-top:8px">
+      <label class="f"><span>Überwachungsklasse</span><select name="uek">${['1', '2', '3'].map(x => `<option ${p.uek === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+      <label class="f"><span>Würfel-Präfix</span><input name="wPrefix" value="${esc(p.wPrefix || 'W')}"></label>
+      <label class="f"><span>Nächste Würfel-Nr.</span><input name="wNext" inputmode="numeric" value="${esc(p.wNext || 1)}"></label>
+    </div>
+    <label class="f" style="margin-top:8px"><span>Würfelregel</span><select name="wRegel">${Object.entries(WREGEL).map(([k, v]) => `<option value="${k}" ${p.wRegel === k ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></label>
+    <div class="grid" style="margin-top:8px"><label class="f"><span>Eigene Regel: 1 Würfel je … m³</span><input name="wM3" inputmode="decimal" value="${esc(p.wM3)}"></label><label class="f"><span>Eigene Regel: mind. … je Betoniertag</span><input name="wTag" inputmode="numeric" value="${esc(p.wTag)}"></label></div>
+    <p class="mute">Welche Regel gilt, steht im Vertrag bzw. folgt aus dem Normenstand. Bitte prüfen.</p>
+    <div class="row"><button class="p" type="submit">Speichern</button>${n ? '' : '<button type="button" class="d" data-act="delProjekt">Projekt löschen</button>'}</div>
+  </form>`;
+  const geo = {lat: p.lat, lon: p.lon};
+  app.querySelector('[data-act=geo]').onclick = async () => {
+    const name = $('#pf [name=ort]').value.trim(); if (!name) return toast('Bitte Ort eingeben');
+    try { const r = await geocode(name); if (!r.length) return $('#geo').textContent = 'Ort nicht gefunden.';
+      $('#geo').innerHTML = 'Bitte wählen: ' + r.map((x, i) => `<button type="button" class="s" data-i="${i}">${esc(x.name)}${x.admin1 ? ', ' + esc(x.admin1) : ''}</button>`).join(' ');
+      $('#geo').querySelectorAll('button').forEach(b => b.onclick = () => { const x = r[b.dataset.i]; geo.lat = x.latitude; geo.lon = x.longitude; $('#geo').textContent = `Gewählt: ${x.name} (${x.latitude.toFixed(4)}, ${x.longitude.toFixed(4)})`; });
+    } catch (e) { $('#geo').textContent = 'Ortssuche nicht möglich (kein Netz?)'; }
+  };
+  $('#pf').onsubmit = async e => {
+    e.preventDefault(); const fd = Object.fromEntries(new FormData(e.target));
+    const o = {...p, ...fd, id: p.id || uid(), created: p.created || Date.now(), lat: geo.lat ?? null, lon: geo.lon ?? null, wNext: parseInt(fd.wNext) || 1, checklist: p.checklist || {}};
+    await db.put('projects', o); await load(); location.hash = `#/p/${o.id}`;
+  };
+  const del = app.querySelector('[data-act=delProjekt]');
+  if (del) del.onclick = async () => {
+    if (!confirm(`Projekt „${p.name}“ mit allen Lieferscheinen, Fotos und Protokollen löschen?`)) return;
+    for (const l of lsOf(p.id)) { for (const ph of l.photoIds || []) await db.del('photos', ph); await db.del('ls', l.id); }
+    for (const s of S.sorten.filter(x => x.projectId === p.id)) await db.del('sorten', s.id);
+    for (const b of S.bauteile.filter(x => x.projectId === p.id)) await db.del('bauteile', b.id);
+    for (const b of S.betonagen.filter(x => x.projectId === p.id)) await db.del('betonagen', b.id);
+    await db.del('projects', p.id); await load(); location.hash = '#/';
+  };
+}
+function viewProjekt(app, p, tab) {
+  setHead(p.name, '#/');
+  const tabs = [['ls', 'Lieferscheine'], ['bauteile', 'Bauteile'], ['sorten', 'Sorten'], ['wuerfel', 'Würfel'], ['listen', 'Listen & Export']];
+  if (p.uek !== '1') tabs.push(['uek', 'ÜK ' + p.uek]);
+  tabs.push(['info', 'Projekt']);
+  let body = '';
+  const L = lsOf(p.id);
+  if (tab === 'ls') {
+    const groups = {};
+    for (const l of L) { const k = l.datum + '|' + (l.bauteilId || '-'); (groups[k] = groups[k] || []).push(l); }
+    const keys = Object.keys(groups).sort().reverse();
+    body = keys.length ? keys.map(k => { const [d, bt] = k.split('|'); const g = groups[k].sort((a, b) => (a.zeitEntladeBeginn || a.zeitAnkunft || '').localeCompare(b.zeitEntladeBeginn || b.zeitAnkunft || '')); const m = g.filter(aktiv).reduce((s, l) => s + (num(l.menge) || 0), 0);
+      return `<div class="grp"><span>${fdat(d)} · ${esc(btById(bt)?.name || 'ohne Bauteil')} · ${fmt(m)} m³</span><a href="#/p/${p.id}/prot/${bt}/${d}">Protokoll ›</a></div><div class="card list">${g.map(l => { const r = pruefe(l, p); const s = sorteById(l.sorteId);
+        return `<a class="item" href="#/p/${p.id}/ls/${l.id}"><span class="dot ${ampel(r)}"></span><div class="t"><b>LS ${esc(l.lsNr || '–')} · ${fmt(num(l.menge))} m³</b><span class="mute">${esc(l.zeitEntladeBeginn || l.zeitAnkunft || '--:--')} · ${esc(s?.bez || l.lsFestigkeit || 'Sorte?')} · ${esc(l.fahrzeug || '')}</span></div>${l.wuerfel?.length ? `<span class="badge">${l.wuerfel.length} W</span>` : ''}${l.zurueckgewiesen ? '<span class="badge rot">zurück</span>' : ''}${l.bestaetigt === false ? '<span class="badge gelb">ungeprüft</span>' : ''}</a>`; }).join('')}</div>`; }).join('') : '<div class="card mute">Noch keine Lieferscheine. Tipp: Zuerst Sortenverzeichnis und Bauteile anlegen.</div>';
+    body = `<div class="row" style="margin-bottom:8px"><a class="btn" href="#/p/${p.id}/import">Mehrere Lieferscheine importieren (PDF/Fotos)</a></div>` + body;
+  }
+  if (tab === 'bauteile') {
+    const bts = S.bauteile.filter(b => b.projectId === p.id);
+    body = `<div class="card list">${bts.length ? bts.map(b => { const g = L.filter(l => l.bauteilId === b.id && aktiv(l)); const m = g.reduce((s, l) => s + (num(l.menge) || 0), 0); const soll = num(b.soll); const tage = [...new Set(g.map(l => l.datum))].sort();
+      let cls = ''; if (soll) cls = m > soll * 1.05 ? 'gelb' : 'gruen';
+      return `<a class="item" href="#/p/${p.id}/bauteil/${b.id}"><span class="dot ${cls}"></span><div class="t"><b>${esc(b.name)}</b><span class="mute">${b.achsen ? esc(b.achsen) + ' · ' : ''}${esc(sorteById(b.sorteId)?.bez || 'keine Sorte')} · geliefert ${fmt(m)} m³${soll ? ' / Soll ' + fmt(soll) + ' m³' : ''}${tage.length ? ' · ' + tage.map(fdat).join(', ') : ''}</span></div>›</a>`; }).join('') : '<p class="mute">Noch keine Bauteile.</p>'}</div><a class="btn" href="#/p/${p.id}/bauteil/neu">+ Bauteil</a>`;
+  }
+  if (tab === 'sorten') {
+    const ss = S.sorten.filter(s => s.projectId === p.id);
+    const werke = [...new Set(ss.map(s => s.werk || 'ohne Werk'))].sort();
+    body = `<div class="card"><div class="row"><input id="sq" placeholder="Suchen: Nr., C30/37, XD3, WU …" style="flex:1"><label class="cb" style="font-size:14px"><input type="checkbox" id="sgen"> nur genutzte</label></div></div>
+      ${ss.length ? werke.map(w => `<div class="grp sw" data-w="${esc(w)}"><span>${esc(w)}</span><span class="mute">${ss.filter(s => (s.werk || 'ohne Werk') === w).length} Sorten</span></div><div class="card list">${ss.filter(s => (s.werk || 'ohne Werk') === w).map(s => { const g = L.filter(l => l.sorteId === s.id && aktiv(l)); const m = g.reduce((a, l) => a + (num(l.menge) || 0), 0); const b = num(s.bestellt); const cls = b ? (m > b ? 'rot' : m > b * 0.9 ? 'gelb' : 'gruen') : (g.length ? 'gruen' : '');
+        const such = [s.bez, s.sortennr, s.rezeptNr, s.festigkeit, s.exposition, s.konsistenz, s.bemerkung, s.groesstkorn ? 'GK' + s.groesstkorn : ''].join(' ').toUpperCase();
+        return `<a class="item si" data-q="${esc(such)}" data-gen="${g.length ? 1 : 0}" href="#/p/${p.id}/sorte/${s.id}"><span class="dot ${cls}"></span><div class="t"><b>${esc(s.bez || ((s.festigkeit || '') + ' ' + (s.konsistenz || '')))}</b><span class="mute">${s.sortennr ? 'Nr. ' + esc(s.sortennr) + ' · ' : ''}${esc(s.festigkeit || '')} ${esc(s.konsistenz || '')}${s.groesstkorn ? ' · GK ' + esc(s.groesstkorn) : ''} · ${esc(s.exposition || '')}${s.feuchte ? ' · ' + esc(s.feuchte) : ''}${s.pruefalter ? ' · PA ' + esc(s.pruefalter) + ' d' : ''}${s.bemerkung ? ' · ' + esc(s.bemerkung) : ''}${g.length || b ? `<br>geliefert ${fmt(m)} m³${b ? ' von ' + fmt(b) + ' m³ · Rest ' + fmt(b - m) + ' m³' : ''}` : ''}</span></div>›</a>`; }).join('')}</div>`).join('') : '<div class="card mute">Noch keine Sorten. Das Sortenverzeichnis ist die Grundlage der Prüfung.</div>'}
+      <div class="row"><a class="btn" href="#/p/${p.id}/sorte/neu">+ Sorte</a><label class="btn"><input type="file" accept="application/json,.json" id="simp" hidden>Sortenverzeichnis importieren</label></div>`;
+  }
+  if (tab === 'wuerfel') {
+    const ss = S.sorten.filter(s => s.projectId === p.id);
+    const zeilen = ss.map(s => { const g = L.filter(l => l.sorteId === s.id && aktiv(l)); const soll = wuerfelSoll(p, g), ist = wuerfelIst(g); const cls = ist >= soll ? 'gruen' : 'rot'; return g.length ? `<div class="item"><span class="dot ${cls}"></span><div class="t"><b>${esc(s.bez || s.sortennr)}</b><span class="mute">Soll ${soll} · Ist ${ist} · ${fmt(g.reduce((a, l) => a + (num(l.menge) || 0), 0))} m³ an ${new Set(g.map(l => l.datum)).size} Tag(en)</span></div></div>` : ''; }).join('');
+    const tageOhne = (p.wRegel !== 'alt' && p.uek !== '1') ? [...new Set(L.filter(aktiv).map(l => l.datum + '|' + l.sorteId))].filter(k => { const [d, s] = k.split('|'); return !L.some(l => l.datum === d && l.sorteId === s && l.wuerfel?.length); }) : [];
+    const W = []; for (const l of L) for (const w of l.wuerfel || []) W.push({w, l});
+    W.sort((a, b) => String(a.w.nr).localeCompare(String(b.w.nr), 'de', {numeric: true}));
+    body = `<div class="card"><h2>Soll / Ist je Sorte</h2><p class="mute">Regel: ${esc(WREGEL[p.wRegel] || '')}${p.uek === '1' ? ' – bei ÜK 1 nur in Zweifelsfällen' : ''}</p><div class="list">${zeilen || '<p class="mute">Noch keine Lieferungen.</p>'}</div>
+      ${tageOhne.length ? `<div class="banner" style="margin-top:8px">Betoniertage ohne Würfel: ${tageOhne.map(k => { const [d, s] = k.split('|'); return fdat(d) + ' (' + esc(sorteById(s)?.bez || '?') + ')'; }).join(', ')}</div>` : ''}</div>
+      <div class="card"><h2>Würfelliste</h2><p class="mute">Druckfestigkeit aus dem Prüfbericht eintragen (N/mm²). Wird beim Verlassen des Feldes gespeichert.</p><div class="scroll"><table><tr><th>Nr.</th><th>Datum</th><th>Bauteil</th><th>LS</th><th>Sorte</th><th class="n">PA</th><th class="n">7 d</th><th class="n">28 d</th><th class="n">56 d</th></tr>
+      ${W.map(({w, l}) => `<tr><td>${esc(w.nr)}</td><td>${fdat(l.datum)}</td><td>${esc(btById(l.bauteilId)?.name || '')}</td><td>${esc(l.lsNr || '')}</td><td>${esc(sorteById(l.sorteId)?.bez || '')}</td><td class="n">${esc(sorteById(l.sorteId)?.pruefalter || '')}</td><td class="n"><input style="width:64px;min-height:32px;padding:4px" inputmode="decimal" data-ls="${l.id}" data-nr="${esc(w.nr)}" data-k="f7" value="${esc(w.f7)}"></td><td class="n"><input style="width:64px;min-height:32px;padding:4px" inputmode="decimal" data-ls="${l.id}" data-nr="${esc(w.nr)}" data-k="f28" value="${esc(w.f28)}"></td><td class="n"><input style="width:64px;min-height:32px;padding:4px" inputmode="decimal" data-ls="${l.id}" data-nr="${esc(w.nr)}" data-k="f56" value="${esc(w.f56)}"></td></tr>`).join('') || '<tr><td colspan="9" class="mute">Noch keine Würfel.</td></tr>'}</table></div></div>`;
+  }
+  if (tab === 'listen') {
+    body = `<div class="card"><h2>Export (Excel / CSV)</h2><div class="row">
+      <button data-act="csvLS">Lieferscheinliste</button><button data-act="csvW">Würfelliste</button><button data-act="csvBT">Mengen je Bauteil</button><button data-act="csvS">Mengen je Sorte</button></div>
+      <p class="mute">CSV-Dateien öffnen sich in Excel. Trennzeichen Semikolon, Dezimalkomma.</p></div>
+      <div class="card"><h2>Abschluss-Paket</h2><p>Lieferverzeichnis, Sortenverzeichnis, Würfelliste und alle Betonierprotokolle in einem Dokument. Über „Drucken“ als PDF speichern.</p><a class="btn p" href="#/p/${p.id}/paket">Abschluss-Paket öffnen</a></div>`;
+  }
+  if (tab === 'uek') body = uekHtml(p, L);
+  if (tab === 'info') {
+    body = `<div class="card"><div class="kopf doc"><div>Projekt-Nr.: ${esc(p.nr || '–')}</div><div>ÜK: ${esc(p.uek)}</div><div>Ort: ${esc(p.ort || '–')}</div><div>Lieferadresse: ${esc(p.lieferadresse || '–')}</div><div>Würfelregel: ${esc(WREGEL[p.wRegel])}</div><div>Nächste Würfel-Nr.: ${esc(p.wPrefix)}-${String(p.wNext).padStart(3, '0')}</div></div><p><a class="btn" href="#/p/${p.id}/bearbeiten">Bearbeiten</a></p></div>`;
+  }
+  app.innerHTML = sicherungsBanner() + `<nav class="tabs">${tabs.map(([k, v]) => `<a href="#/p/${p.id}/tab/${k}" class="${k === tab ? 'on' : ''}">${v}</a>`).join('')}</nav>${body}<a class="btn p fab" href="#/p/${p.id}/ls/neu">+ Lieferschein</a>`;
+  app.querySelectorAll('input[data-ls]').forEach(i => i.onchange = async () => { const l = S.ls.find(x => x.id === i.dataset.ls); const w = l.wuerfel.find(x => String(x.nr) === i.dataset.nr); w[i.dataset.k] = i.value; await db.put('ls', l); toast('Gespeichert'); });
+  const act = {csvLS: () => exportLS(p), csvW: () => exportW(p), csvBT: () => exportBT(p), csvS: () => exportS(p)};
+  app.querySelectorAll('[data-act]').forEach(b => { if (act[b.dataset.act]) b.onclick = act[b.dataset.act]; });
+  if (tab === 'uek') bindUek(app, p);
+  if (tab === 'sorten') {
+    const filt = () => { const q = ($('#sq').value || '').toUpperCase().split(/\s+/).filter(Boolean), gen = $('#sgen').checked;
+      app.querySelectorAll('.si').forEach(a => { a.hidden = !(q.every(w => a.dataset.q.includes(w)) && (!gen || a.dataset.gen === '1')); });
+      app.querySelectorAll('.sw').forEach(g => { const c = g.nextElementSibling; const vis = [...c.querySelectorAll('.si')].some(a => !a.hidden); g.hidden = !vis; c.hidden = !vis; }); };
+    $('#sq').oninput = filt; $('#sgen').onchange = filt;
+    $('#simp').onchange = async e => { const f = e.target.files[0]; if (!f) return; try { const r = await importSorten(p, f); toast(`${r.neu} Sorten importiert${r.gleich ? ', ' + r.gleich + ' schon vorhanden' : ''}`); render(); } catch (err) { toast('Import: ' + err.message); } };
+  }
+}
+
+/* ---- ÜK 2/3 Checkliste ---- */
+function uekHtml(p, L) {
+  const c = p.checklist || {}; const tage = [...new Set(L.filter(aktiv).map(l => l.datum))].sort();
+  const items = [];
+  const it = (lvl, txt) => items.push({lvl, txt});
+  it(c.pruefstelle ? 'gruen' : 'rot', 'Ständige Betonprüfstelle (Eigenüberwachung): ' + (c.pruefstelle || 'nicht eingetragen'));
+  it(c.ueberwachung ? 'gruen' : 'rot', 'Anerkannte Überwachungsstelle (Fremdüberwachung): ' + (c.ueberwachung || 'nicht eingetragen'));
+  it(c.unabhaengig ? 'gruen' : 'gelb', c.unabhaengig ? 'Bestätigt: Prüfstelle überwacht nicht auch das Betonwerk' : 'Bestätigen: Prüfstelle überwacht nicht auch das Betonwerk');
+  if (!c.anmeldung) it('rot', 'Baustellenanmeldung: Datum fehlt (schriftlich vor Beginn der Betonarbeiten)');
+  else if (tage.length && c.anmeldung > tage[0]) it('rot', `Anmeldung ${fdat(c.anmeldung)} liegt nach der ersten Betonage ${fdat(tage[0])}`);
+  else it('gruen', 'Baustelle angemeldet am ' + fdat(c.anmeldung));
+  it(c.schild ? 'gruen' : 'rot', c.schild ? 'Baustellenschild mit DIN EN 13670 / DIN 1045-3 und Überwachungsstelle angebracht' : 'Baustellenschild (DIN EN 13670 / DIN 1045-3, Überwachungsstelle) nicht bestätigt');
+  const sch = c.schulungen || [];
+  if (!sch.length) it('gelb', 'Keine Schulungsnachweise eingetragen (spätestens alle 3 Jahre)');
+  for (const s of sch) { const ab = addDays(s.datum, 3 * 365); const lvl = ab < today() ? 'rot' : ab < addDays(today(), 90) ? 'gelb' : 'gruen'; it(lvl, `Schulung ${s.name}: ${fdat(s.datum)} – gültig bis ${fdat(ab)}`); }
+  for (let i = 1; i < tage.length; i++) { const g = (new Date(tage[i]) - new Date(tage[i - 1])) / 864e5; if (g > 28) it('gelb', `Unterbrechung ${Math.round(g)} Tage (${fdat(tage[i - 1])} – ${fdat(tage[i])}): Meldung an Überwachungsstelle prüfen`); }
+  it('grau', 'Meldepflicht bei Wechsel von Bauleiter oder Prüfstellenleiter beachten');
+  it(c.abmeldung ? 'gruen' : 'grau', c.abmeldung ? 'Abgemeldet am ' + fdat(c.abmeldung) : 'Abmeldung nach Abschluss: Akte mit Betoniertagebuch und Lieferverzeichnis an die Überwachungsstelle');
+  return `<div class="card"><h2>Status ÜK ${esc(p.uek)}</h2>${chkHtml(items)}</div>
+  <form id="uf" class="card"><h2>Angaben</h2><div class="grid">
+    <label class="f"><span>Ständige Betonprüfstelle</span><input name="pruefstelle" value="${esc(c.pruefstelle)}"></label>
+    <label class="f"><span>Überwachungsstelle</span><input name="ueberwachung" value="${esc(c.ueberwachung)}"></label>
+    <label class="f"><span>Baustellenanmeldung am</span><input type="date" name="anmeldung" value="${esc(c.anmeldung)}"></label>
+    <label class="f"><span>Abmeldung am</span><input type="date" name="abmeldung" value="${esc(c.abmeldung)}"></label></div>
+    <label class="cb"><input type="checkbox" name="unabhaengig" ${c.unabhaengig ? 'checked' : ''}> Prüfstelle überwacht nicht das Betonwerk</label>
+    <label class="cb"><input type="checkbox" name="schild" ${c.schild ? 'checked' : ''}> Baustellenschild angebracht</label>
+    <h2 style="margin-top:10px">Schulungen</h2><div id="sch">${sch.map((s, i) => `<div class="row" style="margin:4px 0"><span style="flex:1">${esc(s.name)} · ${fdat(s.datum)}</span><button type="button" class="s d" data-del="${i}">×</button></div>`).join('')}</div>
+    <div class="row"><input name="sname" placeholder="Name" style="flex:2"><input type="date" name="sdatum" style="flex:1"><button type="button" class="s" id="addSch">+</button></div>
+    <p><button class="p" type="submit">Speichern</button></p></form>
+  <p class="mute">Grundlage: DIN 1045-3, Anhänge zur Überwachung; Leitfäden der Überwachungsstellen. Ersetzt nicht die Vorgaben eurer Überwachungsstelle.</p>`;
+}
+function bindUek(app, p) {
+  const f = $('#uf'); if (!f) return;
+  const save = async () => { const fd = new FormData(f); p.checklist = {...(p.checklist || {}), pruefstelle: fd.get('pruefstelle'), ueberwachung: fd.get('ueberwachung'), anmeldung: fd.get('anmeldung'), abmeldung: fd.get('abmeldung'), unabhaengig: !!fd.get('unabhaengig'), schild: !!fd.get('schild')}; await db.put('projects', p); await load(); };
+  f.onsubmit = async e => { e.preventDefault(); await save(); toast('Gespeichert'); render(); };
+  $('#addSch').onclick = async () => { const n = f.sname.value.trim(), d = f.sdatum.value; if (!n || !d) return toast('Name und Datum eingeben'); await save(); p.checklist.schulungen = [...(p.checklist.schulungen || []), {name: n, datum: d}]; await db.put('projects', p); await load(); render(); };
+  f.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => { await save(); p.checklist.schulungen.splice(+b.dataset.del, 1); await db.put('projects', p); await load(); render(); });
+}
+
+/* ---- Sorte ---- */
+const SORTE_FELDER = [['bez', 'Bezeichnung (Kurzform)'], ['werk', 'Lieferwerk'], ['sortennr', 'Sortennr. / Artikel / Abrufnr.'], ['rezeptNr', 'Rezept-Nr.'], ['festigkeit', 'Festigkeitsklasse'], ['exposition', 'Expositionsklassen'], ['konsistenz', 'Konsistenzklasse'], ['groesstkorn', 'Größtkorn (mm)'], ['feuchte', 'Feuchtigkeitsklasse'], ['fe', 'Festigkeitsentwicklung'], ['pruefalter', 'Prüfalter (Tage)'], ['uek', 'Überwachungsklasse'], ['chlorid', 'Chloridklasse'], ['zement', 'Zement'], ['wz', 'w/z'], ['bestellt', 'Bestellte Menge (m³)']];
+function viewSorte(app, p, sid) {
+  const n = sid === 'neu'; const s = n ? {} : sorteById(sid); if (!s) return location.hash = `#/p/${p.id}/tab/sorten`;
+  setHead(n ? 'Neue Sorte' : (s.bez || 'Sorte'), `#/p/${p.id}/tab/sorten`);
+  const L = lsOf(p.id).filter(l => l.sorteId === s.id && aktiv(l));
+  app.innerHTML = `${n ? '' : `<div class="card"><div class="sum"><div>Geliefert<b>${fmt(L.reduce((a, l) => a + (num(l.menge) || 0), 0))} m³</b></div><div>Lieferscheine<b>${L.length}</b></div><div>Würfel<b>${wuerfelIst(L)} / Soll ${wuerfelSoll(p, L)}</b></div></div></div>`}
+  <form id="sf" class="card"><div class="grid">${SORTE_FELDER.map(([k, t]) => `<label class="f"><span>${t}${k === 'bez' ? ' *' : ''}</span><input name="${k}" ${k === 'bez' ? 'required' : ''} ${k === 'bestellt' ? 'inputmode="decimal"' : ''} value="${esc(s[k])}"></label>`).join('')}</div>
+    <label class="f" style="margin-top:8px"><span>Besondere Eigenschaften / Bemerkung (z. B. WU, PA 56 d, Massige Bauteile)</span><textarea name="bemerkung">${esc(s.bemerkung)}</textarea></label>
+    ${s.quelle ? `<p class="mute">Quelle: ${esc(s.quelle)}</p>` : ''}
+    <div class="row" style="margin-top:8px"><button class="p">Speichern</button>${n ? '' : '<button type="button" class="d" id="del">Löschen</button>'}</div></form>`;
+  $('#sf').onsubmit = async e => { e.preventDefault(); const o = {...s, ...Object.fromEntries(new FormData(e.target)), id: s.id || uid(), projectId: p.id}; await db.put('sorten', o); await load(); location.hash = `#/p/${p.id}/tab/sorten`; };
+  const d = $('#del'); if (d) d.onclick = async () => { if (lsOf(p.id).some(l => l.sorteId === s.id)) return toast('Sorte wird von Lieferscheinen genutzt'); if (!confirm('Sorte löschen?')) return; await db.del('sorten', s.id); await load(); location.hash = `#/p/${p.id}/tab/sorten`; };
+}
+async function importSorten(p, file) {
+  const j = JSON.parse(await file.text());
+  const liste = j.sorten || (Array.isArray(j) ? j : null); if (!liste) throw new Error('Keine Sortenliste in der Datei');
+  let neu = 0, gleich = 0;
+  for (const x of liste) {
+    const da = S.sorten.find(y => y.projectId === p.id && sortenNrGleich(y.sortennr, x.sortennr) && (y.werk || '') === (x.werk || ''));
+    if (da) { gleich++; continue; }
+    await db.put('sorten', {...x, id: uid(), projectId: p.id}); neu++;
+  }
+  await load(); return {neu, gleich};
+}
+
+/* ---- Bauteil ---- */
+function viewBauteil(app, p, bid) {
+  const n = bid === 'neu'; const b = n ? {} : btById(bid); if (!b) return location.hash = `#/p/${p.id}/tab/bauteile`;
+  setHead(n ? 'Neues Bauteil' : b.name, `#/p/${p.id}/tab/bauteile`);
+  const ss = S.sorten.filter(s => s.projectId === p.id);
+  const g = n ? [] : lsOf(p.id).filter(l => l.bauteilId === b.id);
+  const tage = [...new Set(g.map(l => l.datum))].sort();
+  app.innerHTML = `<form id="bf" class="card"><div class="grid">
+    <label class="f"><span>Bezeichnung *</span><input name="name" required value="${esc(b.name)}" placeholder="z. B. Bodenplatte Gebäude A"></label>
+    <label class="f"><span>Achsen (optional)</span><input name="achsen" value="${esc(b.achsen)}" placeholder="A–D / 1–5"></label>
+    <label class="f"><span>Standard-Sorte</span><select name="sorteId"><option value="">–</option>${ss.map(s => `<option value="${s.id}" ${b.sorteId === s.id ? 'selected' : ''}>${esc(sorteLabel(s))}</option>`).join('')}</select></label>
+    <label class="f"><span>Soll-Menge laut Plan (m³)</span><input name="soll" inputmode="decimal" value="${esc(b.soll)}"></label></div>
+    <div class="row" style="margin-top:8px"><button class="p">Speichern</button>${n ? '' : '<button type="button" class="d" id="del">Löschen</button>'}</div></form>
+    ${tage.length ? `<div class="card"><h2>Betonagen</h2><div class="list">${tage.map(d => { const m = g.filter(l => l.datum === d && aktiv(l)).reduce((s, l) => s + (num(l.menge) || 0), 0); return `<a class="item" href="#/p/${p.id}/prot/${b.id}/${d}"><div class="t"><b>${fdat(d)}</b><span class="mute">${fmt(m)} m³ · Betonierprotokoll</span></div>›</a>`; }).join('')}</div></div>` : ''}`;
+  $('#bf').onsubmit = async e => { e.preventDefault(); const o = {...b, ...Object.fromEntries(new FormData(e.target)), id: b.id || uid(), projectId: p.id}; await db.put('bauteile', o); await load(); location.hash = `#/p/${p.id}/tab/bauteile`; };
+  const d = $('#del'); if (d) d.onclick = async () => { if (g.length) return toast('Bauteil hat Lieferscheine'); if (!confirm('Bauteil löschen?')) return; await db.del('bauteile', b.id); await load(); location.hash = `#/p/${p.id}/tab/bauteile`; };
+}
+
+/* ---- Lieferschein ---- */
+async function viewLS(app, p, lid, q, draft, keep) {
+  const n = lid === 'neu' || (draft && !S.ls.some(x => x.id === draft.id));
+  if (draft) { F = draft; pending = keep || {}; }
+  else if (n) {
+    const last = [...lsOf(p.id)].sort((a, b) => (b.created || 0) - (a.created || 0))[0];
+    const bt = q.get('bauteil') || last?.bauteilId || '';
+    F = {id: uid(), projectId: p.id, datum: q.get('datum') || today(), bauteilId: bt, sorteId: btById(bt)?.sorteId || last?.sorteId || '', werk: last?.werk || '', fahrzeugTyp: last?.fahrzeugTyp || 'mischer', wuerfel: [], photoIds: [], unsicher: []};
+  } else {
+    const l = S.ls.find(x => x.id === lid); if (!l) return location.hash = `#/p/${p.id}`;
+    F = structuredClone(l); F.unsicher = F.unsicher || []; F.wuerfel = F.wuerfel || []; F.photoIds = F.photoIds || [];
+  }
+  if (!draft) pending = {};
+  setHead(n ? 'Neuer Lieferschein' : 'LS ' + (F.lsNr || ''), `#/p/${p.id}`);
+  const ss = S.sorten.filter(s => s.projectId === p.id), bts = S.bauteile.filter(b => b.projectId === p.id);
+  const fld = (k, lab, extra = '') => `<label class="f ${F.unsicher.includes(k) ? 'uns' : ''}" data-f="${k}"><span>${lab}${F.unsicher.includes(k) ? ' <em>KI unsicher</em>' : ''}</span><input name="${k}" value="${esc(F[k])}" ${extra}></label>`;
+  const tfld = (k, lab) => `<label class="f ${F.unsicher.includes(k) ? 'uns' : ''}" data-f="${k}"><span>${lab}${F.unsicher.includes(k) ? ' <em>KI unsicher</em>' : ''}</span><span class="tm"><input type="time" name="${k}" value="${esc(F[k])}"><button type="button" class="s" data-now="${k}">Jetzt</button></span></label>`;
+  const cb = (k, lab) => `<label class="cb"><input type="checkbox" name="${k}" ${F[k] ? 'checked' : ''}> ${lab}</label>`;
+  app.innerHTML = `<div class="card" id="pruef"></div>
+  <form id="lf" autocomplete="off">
+  <div class="card"><h2>Fotos</h2><div class="thumbs" id="thumbs"></div>
+    <div class="row"><label class="btn"><input type="file" accept="image/*,application/pdf" multiple id="foto" hidden>📷 Foto / PDF</label>
+    <button type="button" class="p" id="ki" ${S.settings.apiKey ? '' : 'disabled'}>Fotos auslesen (KI)</button></div>
+    <p class="mute" id="kiinfo">${S.settings.apiKey ? 'KI liest die Fotos aus. Unsichere Felder werden gelb markiert – bitte prüfen.' : 'KI-Auslesen ist aus. API-Schlüssel in den Einstellungen eintragen, sonst Felder von Hand ausfüllen.'}</p></div>
+  <div class="card"><h2>Zuordnung</h2><div class="grid">
+    <label class="f"><span>Datum</span><input type="date" name="datum" value="${esc(F.datum)}"></label>
+    <label class="f"><span>Bauteil</span><select name="bauteilId"><option value="">–</option>${bts.map(b => `<option value="${b.id}" ${F.bauteilId === b.id ? 'selected' : ''}>${esc(b.name)}</option>`).join('')}</select></label>
+    <label class="f"><span>Sorte (Verzeichnis)</span><select name="sorteId"><option value="">–</option>${ss.map(s => `<option value="${s.id}" ${F.sorteId === s.id ? 'selected' : ''}>${esc(sorteLabel(s))}</option>`).join('')}</select></label></div>
+    ${!bts.length || !ss.length ? `<p class="mute">Tipp: <a href="#/p/${p.id}/bauteil/neu">Bauteil</a> und <a href="#/p/${p.id}/sorte/neu">Sorte</a> vorher anlegen.</p>` : ''}</div>
+  <div class="card"><h2>Lieferschein</h2><div class="grid">
+    ${fld('lsNr', 'LS-Nr.')}${fld('werk', 'Werk')}${fld('fahrzeug', 'Fahrzeug')}${fld('auftragNr', 'Auftrags-Nr.')}
+    <label class="f"><span>Fahrzeugart</span><select name="fahrzeugTyp"><option value="mischer" ${F.fahrzeugTyp !== 'ohne' ? 'selected' : ''}>Fahrmischer / Rührwerk (90 min)</option><option value="ohne" ${F.fahrzeugTyp === 'ohne' ? 'selected' : ''}>ohne Rührwerk, steif (45 min)</option></select></label>
+    ${fld('lsSortennr', 'Sortennr. lt. LS')}${fld('lsFestigkeit', 'Festigkeit lt. LS')}${fld('lsExposition', 'Exposition lt. LS')}${fld('lsKonsistenz', 'Konsistenz lt. LS')}${fld('lsFeuchte', 'Feuchtigkeitskl. lt. LS')}
+    ${fld('groesstkorn', 'Größtkorn')}${fld('menge', 'Menge m³', 'inputmode="decimal"')}${fld('bestellmengeLS', 'Bestellmenge lt. LS m³', 'inputmode="decimal"')}${fld('mengeKum', 'Geliefert kumuliert lt. LS m³', 'inputmode="decimal"')}${fld('restLS', 'Rest lt. LS m³', 'inputmode="decimal"')}${fld('lsAdresse', 'Lieferadresse lt. LS')}
+    <label class="f ${F.unsicher.includes('unterschrift') ? 'uns' : ''}"><span>Unterschrift Baustelle</span><select name="unterschrift"><option value="">–</option><option value="ja" ${F.unterschrift === 'ja' ? 'selected' : ''}>ja</option><option value="nein" ${F.unterschrift === 'nein' ? 'selected' : ''}>nein</option></select></label></div></div>
+  <div class="card"><h2>Zeiten</h2><div class="grid">${tfld('zeitBeladung', 'Beladung / 1. Wasserzugabe Werk')}${tfld('zeitAbfahrt', 'Abfahrt Werk')}${tfld('zeitAnkunft', 'Ankunft Baustelle')}${tfld('zeitEntladeBeginn', 'Entladebeginn')}${tfld('zeitEntladeEnde', 'Entladeende')}${fld('verlaengertMin', 'Verarbeitbarkeit verlängert lt. LS (min)', 'inputmode="numeric"')}</div><p class="mute">Nur eintragen, wenn der Lieferschein eine Verlängerung ausweist (z. B. Verzögerer: „verlängert um 02:00“ = 120).</p></div>
+  <div class="card"><h2>Baustelle</h2><div class="grid">${fld('tempFrisch', 'Frischbeton °C', 'inputmode="decimal"')}${fld('konsistenzMess', 'Ausbreitmaß gemessen (mm)', 'inputmode="numeric"')}</div>
+    ${cb('wasserBaustelle', 'Wasser auf der Baustelle zugegeben')}<div id="wl" ${F.wasserBaustelle ? '' : 'hidden'}>${fld('wasserLiter', 'Wasser (l)', 'inputmode="decimal"')}</div>
+    ${cb('fliessmittel', 'Fließmittel auf der Baustelle zugegeben')}<div id="fm" ${F.fliessmittel ? '' : 'hidden'}>${cb('fliessmittelVermerk', 'Zugabe auf dem Lieferschein vermerkt')}</div>
+    <h2 style="margin-top:10px">Würfel</h2><div class="wlist" id="wl2"></div><button type="button" id="wAdd">+ Würfel entnehmen (${esc(p.wPrefix || 'W')}-${String(p.wNext || 1).padStart(3, '0')})</button>
+    <h2 style="margin-top:12px">Rückweisung</h2>${cb('zurueckgewiesen', 'Fahrzeug zurückgewiesen')}<div id="rw" ${F.zurueckgewiesen ? '' : 'hidden'}>${fld('grund', 'Grund')}</div>
+    <label class="f" style="margin-top:8px"><span>Bemerkung</span><textarea name="bemerkung">${esc(F.bemerkung)}</textarea></label>
+    ${F.kiHinweis ? `<p class="mute">KI-Hinweis: ${esc(F.kiHinweis)}</p>` : ''}</div>
+  <div class="row"><button class="p" type="submit">Speichern</button><button type="button" id="saveNext">Speichern + nächster</button>${n ? '' : '<button type="button" class="d" id="del">Löschen</button>'}</div>
+  </form>`;
+  const form = $('#lf');
+  const upd = () => { $('#pruef').innerHTML = `<h2>Prüfung</h2>${chkHtml(pruefe(F, p))}`; };
+  const renderW = () => { $('#wl2').innerHTML = F.wuerfel.map((w, i) => `<span>${esc(w.nr)} <button type="button" data-wdel="${i}">×</button></span>`).join('') || '<span class="mute" style="border:0;background:none">keine</span>'; $('#wl2').querySelectorAll('[data-wdel]').forEach(b => b.onclick = () => { if (!confirm('Würfel entfernen? Die Nummer wird nicht neu vergeben.')) return; F.wuerfel.splice(+b.dataset.wdel, 1); renderW(); }); };
+  const renderThumbs = async () => {
+    const t = $('#thumbs'); t.innerHTML = '';
+    for (const id of F.photoIds) { const blob = pending[id] || (await db.get('photos', id))?.blob; if (!blob) continue; const d = document.createElement('div'); const url = URL.createObjectURL(blob);
+      d.innerHTML = (blob.type === 'application/pdf' ? '<span class="pdf">PDF</span>' : `<img alt="Lieferschein" src="${url}">`) + '<button type="button" class="s">×</button>';
+      d.firstChild.onclick = () => window.open(url); d.querySelector('button').onclick = () => { F.photoIds = F.photoIds.filter(x => x !== id); delete pending[id]; renderThumbs(); }; t.appendChild(d); }
+  };
+  form.addEventListener('input', e => { const el = e.target; if (!el.name) return; F[el.name] = el.type === 'checkbox' ? el.checked : el.value; if (F.unsicher.includes(el.name)) { F.unsicher = F.unsicher.filter(x => x !== el.name); const lab = el.closest('label.f'); lab?.classList.remove('uns'); lab?.querySelector('em')?.remove(); }
+    if (['lsSortennr', 'werk', 'lsFestigkeit', 'lsKonsistenz', 'lsExposition'].includes(el.name) && !F.sorteId) { const sid = findeSorte(p.id, F); if (sid) { F.sorteId = sid; form.sorteId.value = sid; } }
+    if (el.name === 'bauteilId' && !F.sorteId) { F.sorteId = btById(el.value)?.sorteId || ''; form.sorteId.value = F.sorteId; }
+    $('#wl').hidden = !F.wasserBaustelle; $('#fm').hidden = !F.fliessmittel; $('#rw').hidden = !F.zurueckgewiesen; upd(); });
+  form.querySelectorAll('[data-now]').forEach(b => b.onclick = () => { const k = b.dataset.now; const i = form[k]; i.value = nowTime(); i.dispatchEvent(new Event('input', {bubbles: true})); });
+  $('#wAdd').onclick = async () => { const nr = `${p.wPrefix || 'W'}-${String(p.wNext || 1).padStart(3, '0')}`; F.wuerfel.push({nr, zeit: nowTime()}); p.wNext = (p.wNext || 1) + 1; await db.put('projects', p); await load(); $('#wAdd').textContent = `+ Würfel entnehmen (${p.wPrefix || 'W'}-${String(p.wNext).padStart(3, '0')})`; renderW(); toast(`Würfel ${nr} zugeordnet – Nummer auf den Würfel schreiben`); };
+  $('#foto').onchange = async e => { for (const f of e.target.files) { try { const b = await verkleinere(f); const id = uid(); pending[id] = b; F.photoIds.push(id); } catch (err) { toast(err.message); } } e.target.value = ''; renderThumbs(); };
+  $('#ki').onclick = async () => {
+    const blobs = []; for (const id of F.photoIds) { const b = pending[id] || (await db.get('photos', id))?.blob; if (b) blobs.push(b); }
+    if (!blobs.length) return toast('Erst ein Foto aufnehmen');
+    if (!navigator.onLine) return toast('Kein Netz – später auslesen oder von Hand ausfüllen');
+    const btn = $('#ki'); btn.disabled = true; btn.textContent = 'Liest aus …';
+    try {
+      const liste = await kiAuslesen(blobs);
+      const n = kiUebernehmen(F, liste[0] || {});
+      if (liste.length > 1) toast(`${liste.length} Lieferscheine erkannt – hier wird nur der erste übernommen. Für mehrere: „Import“ nutzen.`);
+      await viewLS(app, p, lid, q, F, pending); if (!(liste.length > 1)) toast(`${n} Felder ausgelesen – gelb markierte prüfen`);
+    } catch (err) { toast('KI: ' + err.message); btn.disabled = false; btn.textContent = 'Fotos auslesen (KI)'; }
+  };
+  const speichern = async () => {
+    for (const [id, blob] of Object.entries(pending)) if (F.photoIds.includes(id)) await db.put('photos', {id, blob});
+    const alt = S.ls.find(x => x.id === F.id); if (alt) for (const ph of alt.photoIds || []) if (!F.photoIds.includes(ph)) await fotoLoeschenWennFrei(ph, F.id);
+    F.created = F.created || Date.now(); F.updated = Date.now(); F.bestaetigt = true;
+    await db.put('ls', F); pending = {}; await load();
+  };
+  form.onsubmit = async e => { e.preventDefault(); await speichern(); toast('Gespeichert'); location.hash = `#/p/${p.id}`; };
+  $('#saveNext').onclick = async () => { const d = F.datum, b = F.bauteilId; await speichern(); toast('Gespeichert'); location.hash = `#/p/${p.id}/ls/neu?bauteil=${b}&datum=${d}&t=${Date.now()}`; };
+  const del = $('#del'); if (del) del.onclick = async () => { if (!confirm('Lieferschein löschen?')) return; for (const ph of F.photoIds) await fotoLoeschenWennFrei(ph, F.id); await db.del('ls', F.id); await load(); location.hash = `#/p/${p.id}`; };
+  renderW(); renderThumbs(); upd();
+}
+
+/* ---- Sammel-Import (PDF / mehrere Fotos) ---- */
+async function viewImport(app, p) {
+  setHead('Lieferscheine importieren', `#/p/${p.id}`);
+  const bts = S.bauteile.filter(b => b.projectId === p.id);
+  let dateien = [], ergebnis = [];
+  app.innerHTML = `<div class="card"><p>PDF vom Werk (mehrere Seiten = mehrere Lieferscheine) oder mehrere Fotos auswählen. Die KI liest alles aus; du prüfst danach jeden Lieferschein einzeln.</p>
+    ${S.settings.apiKey ? '' : '<div class="banner">Dafür wird der API-Schlüssel benötigt (Einstellungen).</div>'}
+    <div class="grid"><label class="f"><span>Bauteil für alle</span><select id="ibt"><option value="">– später zuordnen –</option>${bts.map(b => `<option value="${b.id}">${esc(b.name)}</option>`).join('')}</select></label></div>
+    <div class="row" style="margin-top:8px"><label class="btn"><input type="file" accept="image/*,application/pdf" multiple id="idat" hidden>Dateien wählen</label><span class="mute" id="iinfo">keine Dateien</span></div>
+    <div class="row" style="margin-top:8px"><button class="p" id="ilos" disabled>Auslesen (KI)</button></div></div><div id="ires"></div>`;
+  $('#idat').onchange = async e => { dateien = []; for (const f of e.target.files) { try { dateien.push(await verkleinere(f)); } catch (err) { toast(err.message); } } $('#iinfo').textContent = dateien.length + ' Datei(en)'; $('#ilos').disabled = !dateien.length || !S.settings.apiKey; };
+  $('#ilos').onclick = async () => {
+    if (!navigator.onLine) return toast('Kein Netz');
+    const btn = $('#ilos'); btn.disabled = true; btn.textContent = 'Liest aus … (kann 1–2 Minuten dauern)';
+    try {
+      const liste = await kiAuslesen(dateien);
+      const ids = dateien.map(() => uid());
+      ergebnis = liste.map(j => { const F = {id: uid(), projectId: p.id, datum: today(), bauteilId: $('#ibt').value, sorteId: '', fahrzeugTyp: 'mischer', wuerfel: [], photoIds: ids, unsicher: [], bestaetigt: false, importiert: true}; kiUebernehmen(F, j); if (!F.sorteId && F.bauteilId) F.sorteId = btById(F.bauteilId)?.sorteId || ''; return F; });
+      const doppelt = F => S.ls.some(l => l.projectId === p.id && l.lsNr && norm(l.lsNr) === norm(F.lsNr));
+      $('#ires').innerHTML = `<div class="card"><h2>${ergebnis.length} Lieferschein(e) erkannt</h2><div class="list">${ergebnis.map(F => { const r = pruefe(F, p); return `<div class="item"><span class="dot ${ampel(r)}"></span><div class="t"><b>LS ${esc(F.lsNr || '?')} · ${fdat(F.datum)} · ${fmt(num(F.menge))} m³</b><span class="mute">${esc(F.werk || '')} · Sorte ${esc(F.lsSortennr || '?')} ${esc(F.lsFestigkeit || '')} · ${esc(F.zeitBeladung || '--')}→${esc(F.zeitEntladeEnde || '--')}${doppelt(F) ? ' · <b style="color:var(--rot)">schon vorhanden</b>' : ''}</span>${chkHtml(r.filter(x => x.lvl !== 'gruen'))}</div></div>`; }).join('')}</div>
+        <div class="row" style="margin-top:8px"><button class="p" id="isave">Übernehmen (als „ungeprüft“)</button></div><p class="mute">Bereits vorhandene LS-Nummern werden übersprungen.</p></div>`;
+      $('#isave').onclick = async () => {
+        for (let i = 0; i < dateien.length; i++) await db.put('photos', {id: ids[i], blob: dateien[i]});
+        let n = 0; for (const F of ergebnis) { if (doppelt(F)) continue; F.created = Date.now() + n; await db.put('ls', F); n++; }
+        await load(); toast(`${n} Lieferscheine übernommen – bitte einzeln prüfen`); location.hash = `#/p/${p.id}`;
+      };
+    } catch (err) { toast('KI: ' + err.message); }
+    btn.disabled = false; btn.textContent = 'Auslesen (KI)';
+  };
+}
+
+/* ---- Betonierprotokoll ---- */
+function protHtml(p, btid, datum, b, editable) {
+  const bt = btById(btid);
+  const g = lsOf(p.id).filter(l => (l.bauteilId || '-') === btid && l.datum === datum).sort((a, c) => (a.zeitEntladeBeginn || a.zeitAnkunft || '').localeCompare(c.zeitEntladeBeginn || c.zeitAnkunft || ''));
+  const akt = g.filter(aktiv); const w = b.wetter?.[datum];
+  const beg = akt.map(l => l.zeitEntladeBeginn).filter(Boolean).sort()[0], end = akt.map(l => l.zeitEntladeEnde).filter(Boolean).sort().pop();
+  let kum = 0; const sorten = [...new Set(akt.map(l => l.sorteId))].map(sorteById).filter(Boolean);
+  const W = akt.flatMap(l => (l.wuerfel || []).map(x => x.nr));
+  const befunde = []; for (const l of g) for (const r of pruefe(l, p)) if (r.lvl === 'rot' || r.lvl === 'gelb' || r.lvl === 'grau') befunde.push({lvl: r.lvl, txt: `LS ${l.lsNr || '?'}: ${r.txt}`});
+  const inp = (k, ph, type = 'text') => editable ? `<input class="pl${b[k] ? '' : ' leer'}" data-b="${k}" type="${type}" value="${esc(b[k])}" placeholder="${ph}">` : esc(type === 'date' ? fdat(b[k]) : (b[k] || '–'));
+  const nachTage = b.ausschalen ? Object.keys(b.wetter || {}).filter(d => d >= datum && d <= b.ausschalen).sort() : [];
+  return `<div class="doc">
+    <h2 style="font-size:18px;text-transform:none;color:var(--ink)">Betonierprotokoll</h2>
+    <div class="kopf"><div><b>Projekt:</b> ${esc(p.name)}${p.nr ? ' (' + esc(p.nr) + ')' : ''}</div><div><b>Bauteil:</b> ${esc(bt?.name || 'ohne Bauteil')}${bt?.achsen ? ', Achsen ' + esc(bt.achsen) : ''}</div><div><b>Datum:</b> ${fdat(datum)}</div><div><b>Überwachungsklasse:</b> ${esc(p.uek)}</div>
+      <div><b>Prüfstelle:</b> ${esc(p.checklist?.pruefstelle || '–')}</div><div><b>Überwachungsstelle:</b> ${esc(p.checklist?.ueberwachung || '–')}</div>
+      <div><b>Betonierzeit:</b> ${beg || '–'} bis ${end || '–'}${beg && end ? ' (' + diffMin(beg, end) + ' min)' : ''}</div><div><b>Menge:</b> ${fmt(akt.reduce((s, l) => s + (num(l.menge) || 0), 0))} m³ aus ${akt.length} Fahrzeug(en)${g.length > akt.length ? ', ' + (g.length - akt.length) + ' zurückgewiesen' : ''}</div>
+      <div><b>Luft-Temperatur:</b> ${w ? `min ${fmt(w.min)} °C / max ${fmt(w.max)} °C` : '–'} ${editable ? '<button class="s noprint" data-act="wetter">Wetter laden</button>' : ''}</div><div><b>Witterung:</b> ${inp('witterung', 'z. B. sonnig, windig')}</div></div>
+    <h3>Betonsorten</h3><p style="margin:0">${sorten.map(s => esc(`${s.bez}: ${s.festigkeit || ''} ${s.exposition || ''} ${s.konsistenz || ''}${s.groesstkorn ? ' GK ' + s.groesstkorn : ''}${s.werk ? ' – ' + s.werk : ''}`)).join('<br>') || '–'}</p>
+    <h3>Lieferungen</h3><div class="scroll"><table><tr><th>#</th><th>LS-Nr.</th><th>Fahrzeug</th><th>Sorte</th><th class="n">m³</th><th class="n">kum.</th><th>Beladung</th><th>Ankunft</th><th>Entl. von</th><th>bis</th><th class="n">Werk→Ende</th><th class="n">FB °C</th><th class="n">Luft °C</th><th class="n">ABM</th><th>Würfel</th><th>Status</th></tr>
+    ${g.map((l, i) => { const m = num(l.menge) || 0; if (aktiv(l)) kum += m; const r = pruefe(l, p); const lw = lsWetter(l); return `<tr><td>${i + 1}</td><td>${esc(l.lsNr || '')}</td><td>${esc(l.fahrzeug || '')}</td><td>${esc(sorteById(l.sorteId)?.bez || l.lsFestigkeit || '')}</td><td class="n">${fmt(num(l.menge))}</td><td class="n">${aktiv(l) ? fmt(kum) : '–'}</td><td>${esc(l.zeitBeladung || '')}</td><td>${esc(l.zeitAnkunft || '')}</td><td>${esc(l.zeitEntladeBeginn || '')}</td><td>${esc(l.zeitEntladeEnde || '')}</td><td class="n">${diffMin(l.zeitBeladung, l.zeitEntladeEnde) ?? '–'} min</td><td class="n">${esc(l.tempFrisch || '')}</td><td class="n">${lw?.stunde != null ? fmt(lw.stunde) : ''}</td><td class="n">${esc(l.konsistenzMess || '')}</td><td>${esc((l.wuerfel || []).map(x => x.nr).join(', '))}</td><td><span class="dot ${ampel(r)}" style="display:inline-block"></span> ${l.zurueckgewiesen ? 'zurück' : {rot: 'Abw.', gelb: 'prüfen', gruen: 'ok', grau: ''}[ampel(r)]}</td></tr>`; }).join('')}
+    </table></div>
+    <h3>Probekörper</h3><p style="margin:0">${W.length ? W.length + ' Würfel: ' + esc(W.join(', ')) : 'Keine Würfel entnommen.'}</p>
+    <h3>Abweichungen / Hinweise</h3>${befunde.length ? chkHtml(befunde) : '<p style="margin:0">Keine.</p>'}
+    <h3>Nachbehandlung</h3><div class="kopf"><div><b>Art:</b> ${inp('nbArt', 'z. B. Folie, Nachbehandlungsmittel')}</div><div><b>Beginn:</b> ${inp('nbBeginn', 'Uhrzeit')}</div><div><b>Dauer (Tage):</b> ${inp('nbDauer', 'Tage')}</div><div><b>Ausschalen am:</b> ${inp('ausschalen', '', 'date')}</div></div>
+    ${nachTage.length ? `<h3>Luft-Temperatur bis zum Ausschalen</h3><div class="scroll"><table><tr><th>Datum</th>${nachTage.map(d => `<th class="n">${fdat(d).slice(0, 6)}</th>`).join('')}</tr><tr><td>min °C</td>${nachTage.map(d => `<td class="n">${fmt(b.wetter[d].min)}</td>`).join('')}</tr><tr><td>max °C</td>${nachTage.map(d => `<td class="n">${fmt(b.wetter[d].max)}</td>`).join('')}</tr></table></div>` : ''}
+    <h3>Bemerkungen</h3><div>${inp('bemerkung', 'Besonderheiten, Pumpe, Kolonne …')}</div>
+    <div class="sig"><div>Polier: ${inp('polier', 'Name')}</div><div>Bauleiter: ${inp('bauleiter', 'Name')}</div></div>
+    <p class="mute" style="margin-top:12px">Grenzwerte: ${esc(REGELN.quelle)}. Luft-Temperaturen: Open-Meteo (Modelldaten, Baustellenort). Erstellt mit Betonlieferschein-App.</p></div>`;
+}
+async function viewProtokoll(app, p, btid, datum) {
+  setHead('Protokoll ' + fdat(datum), `#/p/${p.id}`);
+  const b = await betonage(p.id, btid === '-' ? null : btid, datum); b.id = bKey(p.id, btid === '-' ? null : btid, datum);
+  app.innerHTML = `<div class="row noprint" style="margin-bottom:10px"><button class="p" id="druck">Drucken / PDF</button><a class="btn" href="#/p/${p.id}/ls/neu?bauteil=${btid === '-' ? '' : btid}&datum=${datum}">+ Lieferschein</a></div><div class="card">${protHtml(p, btid, datum, b, true)}</div>`;
+  $('#druck').onclick = () => window.print();
+  app.querySelectorAll('[data-b]').forEach(i => i.oninput = () => i.classList.toggle('leer', !i.value)); app.querySelectorAll('[data-b]').forEach(i => i.onchange = async () => { b[i.dataset.b] = i.value; await saveBetonage(b); if (i.dataset.b === 'ausschalen') { await ladeWetter(); } });
+  const ladeWetter = async () => { try { const bis = b.ausschalen && b.ausschalen > datum ? (b.ausschalen < today() ? b.ausschalen : today()) : datum; const w = await holeWetter(p, datum, bis > datum ? bis : datum); b.wetter = {...(b.wetter || {}), ...w}; await saveBetonage(b); render(); } catch (e) { toast('Wetter: ' + e.message); } };
+  const wb = app.querySelector('[data-act=wetter]'); if (wb) wb.onclick = ladeWetter;
+  if (!b.wetter?.[datum] && p.lat != null && navigator.onLine && datum <= today()) ladeWetter();
+}
+async function viewPaket(app, p) {
+  setHead('Abschluss-Paket', `#/p/${p.id}/tab/listen`);
+  const L = lsOf(p.id).sort((a, b) => (a.datum + (a.zeitEntladeBeginn || '')).localeCompare(b.datum + (b.zeitEntladeBeginn || '')));
+  const ss = S.sorten.filter(s => s.projectId === p.id);
+  const keys = [...new Set(L.map(l => (l.bauteilId || '-') + '|' + l.datum))].sort((a, b) => a.split('|')[1].localeCompare(b.split('|')[1]));
+  let prots = ''; for (const k of keys) { const [bt, d] = k.split('|'); const b = await betonage(p.id, bt === '-' ? null : bt, d); prots += `<div class="card pb">${protHtml(p, bt, d, b, false)}</div>`; }
+  const W = L.flatMap(l => (l.wuerfel || []).map(w => ({w, l})));
+  app.innerHTML = `<div class="row noprint" style="margin-bottom:10px"><button class="p" onclick="window.print()">Drucken / PDF</button></div>
+  <div class="card doc"><h2 style="font-size:18px;text-transform:none;color:var(--ink)">${esc(p.name)} – Betonage-Dokumentation</h2><p>Stand ${fdat(today())} · ÜK ${esc(p.uek)} · Prüfstelle: ${esc(p.checklist?.pruefstelle || '–')} · Überwachungsstelle: ${esc(p.checklist?.ueberwachung || '–')}</p>
+  <h3>Verwendete Betonsorten</h3><table><tr><th>Bezeichnung</th><th>Sortennr.</th><th>Festigkeit</th><th>Exposition</th><th>Konsistenz</th><th>GK</th><th>Werk</th><th class="n">bestellt m³</th><th class="n">geliefert m³</th></tr>${ss.filter(s => num(s.bestellt) || L.some(l => l.sorteId === s.id)).map(s => `<tr><td>${esc(s.bez)}</td><td>${esc(s.sortennr || '')}</td><td>${esc(s.festigkeit || '')}</td><td>${esc(s.exposition || '')}</td><td>${esc(s.konsistenz || '')}</td><td>${esc(s.groesstkorn || '')}</td><td>${esc(s.werk || '')}</td><td class="n">${fmt(num(s.bestellt))}</td><td class="n">${fmt(L.filter(l => l.sorteId === s.id && aktiv(l)).reduce((a, l) => a + (num(l.menge) || 0), 0))}</td></tr>`).join('')}</table>
+  <h3>Lieferverzeichnis</h3><div class="scroll"><table><tr><th>Datum</th><th>Bauteil</th><th>LS-Nr.</th><th>Werk</th><th>Sorte</th><th class="n">m³</th><th>Entladen</th><th class="n">FB °C</th><th>Würfel</th><th>Status</th></tr>${L.map(l => `<tr><td>${fdat(l.datum)}</td><td>${esc(btById(l.bauteilId)?.name || '')}</td><td>${esc(l.lsNr || '')}</td><td>${esc(l.werk || '')}</td><td>${esc(sorteById(l.sorteId)?.bez || '')}</td><td class="n">${fmt(num(l.menge))}</td><td>${esc((l.zeitEntladeBeginn || '') + '–' + (l.zeitEntladeEnde || ''))}</td><td class="n">${esc(l.tempFrisch || '')}</td><td>${esc((l.wuerfel || []).map(x => x.nr).join(', '))}</td><td>${l.zurueckgewiesen ? 'zurückgewiesen' : ampel(pruefe(l, p))}</td></tr>`).join('')}</table></div>
+  <h3>Würfelliste</h3><table><tr><th>Nr.</th><th>Datum</th><th>Bauteil</th><th>LS-Nr.</th><th>Sorte</th><th class="n">PA</th><th class="n">f 7 d</th><th class="n">f 28 d</th><th class="n">f 56 d</th></tr>${W.map(({w, l}) => `<tr><td>${esc(w.nr)}</td><td>${fdat(l.datum)}</td><td>${esc(btById(l.bauteilId)?.name || '')}</td><td>${esc(l.lsNr || '')}</td><td>${esc(sorteById(l.sorteId)?.bez || '')}</td><td class="n">${esc(sorteById(l.sorteId)?.pruefalter || '')}</td><td class="n">${esc(w.f7 || '')}</td><td class="n">${esc(w.f28 || '')}</td><td class="n">${esc(w.f56 || '')}</td></tr>`).join('')}</table></div>${prots}`;
+}
+
+/* ---- CSV-Export ---- */
+const csvCell = v => { const s = typeof v === 'number' ? String(v).replace('.', ',') : String(v ?? ''); return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+const csv = rows => '﻿' + rows.map(r => r.map(csvCell).join(';')).join('\r\n');
+const fname = (p, t) => `${today()}_${p.name.replace(/[^\wäöüÄÖÜß-]+/g, '_')}_${t}.csv`;
+function exportLS(p) {
+  const rows = [['Datum', 'Bauteil', 'Achsen', 'LS-Nr', 'Werk', 'Fahrzeug', 'Sorte', 'Festigkeit LS', 'Exposition LS', 'Konsistenz LS', 'Menge m3', 'Beladung', 'Abfahrt', 'Ankunft', 'Entladebeginn', 'Entladeende', 'Werk bis Ende min', 'Verlaengert min', 'Unterschrift Baustelle', 'Frischbeton C', 'Ausbreitmass mm', 'Wasser Baustelle l', 'Fliessmittel', 'Wuerfel', 'Zurueckgewiesen', 'Grund', 'Ampel', 'Befunde', 'Bemerkung']];
+  for (const l of lsOf(p.id).sort((a, b) => (a.datum + (a.zeitEntladeBeginn || '')).localeCompare(b.datum + (b.zeitEntladeBeginn || '')))) { const r = pruefe(l, p); const bt = btById(l.bauteilId);
+    rows.push([fdat(l.datum), bt?.name, bt?.achsen, l.lsNr, l.werk, l.fahrzeug, sorteById(l.sorteId)?.bez, l.lsFestigkeit, l.lsExposition, l.lsKonsistenz, num(l.menge), l.zeitBeladung, l.zeitAbfahrt, l.zeitAnkunft, l.zeitEntladeBeginn, l.zeitEntladeEnde, diffMin(l.zeitBeladung, l.zeitEntladeEnde), num(l.verlaengertMin), l.unterschrift, num(l.tempFrisch), l.konsistenzMess, l.wasserBaustelle ? num(l.wasserLiter) ?? 'ja' : '', l.fliessmittel ? 'ja' : '', (l.wuerfel || []).map(w => w.nr).join(', '), l.zurueckgewiesen ? 'ja' : '', l.grund, ampel(r), r.filter(x => x.lvl !== 'gruen').map(x => x.txt).join(' | '), l.bemerkung]); }
+  download(fname(p, 'Lieferscheine'), csv(rows), 'text/csv;charset=utf-8');
+}
+function exportW(p) { const rows = [['Wuerfel-Nr', 'Datum', 'Uhrzeit', 'Bauteil', 'LS-Nr', 'Sorte', 'Festigkeit', 'Pruefalter d', 'f 7d N/mm2', 'f 28d N/mm2', 'f 56d N/mm2']]; for (const l of lsOf(p.id)) for (const w of l.wuerfel || []) rows.push([w.nr, fdat(l.datum), w.zeit, btById(l.bauteilId)?.name, l.lsNr, sorteById(l.sorteId)?.bez, sorteById(l.sorteId)?.festigkeit, sorteById(l.sorteId)?.pruefalter, num(w.f7), num(w.f28), num(w.f56)]); rows.splice(1, rows.length, ...rows.slice(1).sort((a, b) => String(a[0]).localeCompare(String(b[0]), 'de', {numeric: true}))); download(fname(p, 'Wuerfel'), csv(rows), 'text/csv;charset=utf-8'); }
+function exportBT(p) { const rows = [['Bauteil', 'Achsen', 'Soll m3', 'Geliefert m3', 'Differenz m3', 'Betoniertage', 'Lieferscheine', 'Wuerfel']]; for (const b of S.bauteile.filter(x => x.projectId === p.id)) { const g = lsOf(p.id).filter(l => l.bauteilId === b.id && aktiv(l)); const m = g.reduce((s, l) => s + (num(l.menge) || 0), 0); rows.push([b.name, b.achsen, num(b.soll), m, num(b.soll) != null ? +(m - num(b.soll)).toFixed(2) : '', [...new Set(g.map(l => fdat(l.datum)))].join(', '), g.length, wuerfelIst(g)]); } download(fname(p, 'Mengen_Bauteile'), csv(rows), 'text/csv;charset=utf-8'); }
+function exportS(p) { const rows = [['Sorte', 'Sortennr', 'Festigkeit', 'Exposition', 'Konsistenz', 'Werk', 'Bestellt m3', 'Geliefert m3', 'Rest m3', 'Wuerfel Soll', 'Wuerfel Ist']]; for (const s of S.sorten.filter(x => x.projectId === p.id)) { const g = lsOf(p.id).filter(l => l.sorteId === s.id && aktiv(l)); const m = g.reduce((a, l) => a + (num(l.menge) || 0), 0); rows.push([s.bez, s.sortennr, s.festigkeit, s.exposition, s.konsistenz, s.werk, num(s.bestellt), m, num(s.bestellt) != null ? +(num(s.bestellt) - m).toFixed(2) : '', wuerfelSoll(p, g), wuerfelIst(g)]); } download(fname(p, 'Mengen_Sorten'), csv(rows), 'text/csv;charset=utf-8'); }
+
+/* ---- Einstellungen & Sicherung ---- */
+async function viewSettings(app) {
+  setHead('Einstellungen', '#/');
+  const est = navigator.storage?.estimate ? await navigator.storage.estimate() : null;
+  const pers = navigator.storage?.persisted ? await navigator.storage.persisted() : null;
+  app.innerHTML = `<div class="card"><h2>Sicherung</h2><p>Alle Daten liegen nur auf diesem Gerät. Bitte regelmäßig sichern und die Datei z. B. in OneDrive oder per Mail ablegen.</p>
+    <p class="mute">Letzte Sicherung: ${S.settings.lastBackup ? new Date(S.settings.lastBackup).toLocaleString('de-DE') : 'noch nie'}${est ? ` · belegt ca. ${fmt(est.usage / 1048576)} MB` : ''}${pers === false ? ' · Speicher nicht dauerhaft geschützt – App über „Zum Home-Bildschirm“ öffnen' : ''}</p>
+    <div class="row"><button class="p" id="bk">Sicherung herunterladen</button><label class="btn"><input type="file" accept="application/json,.json" id="rs" hidden>Sicherung einspielen</label></div></div>
+  <div class="card"><h2>KI-Auslesen (optional)</h2><p class="mute">Eigener Schlüssel aus der Anthropic Console. Er wird nur auf diesem Gerät gespeichert. In der Console ein monatliches Ausgabenlimit setzen.</p>
+    <label class="f"><span>API-Schlüssel</span><input type="password" id="key" value="${esc(S.settings.apiKey)}" placeholder="sk-ant-…" autocomplete="off"></label>
+    <label class="f" style="margin-top:8px"><span>Modell</span><select id="model"><option value="claude-sonnet-5-5" ${S.settings.model !== 'claude-haiku-4-5-20251001' ? 'selected' : ''}>Claude Sonnet 5.5 (genauer)</option><option value="claude-haiku-4-5-20251001" ${S.settings.model === 'claude-haiku-4-5-20251001' ? 'selected' : ''}>Claude Haiku 4.5 (günstiger)</option></select></label>
+    <div class="row" style="margin-top:8px"><button class="p" id="ks">Speichern</button><button id="kd">Schlüssel löschen</button></div></div>
+  <div class="card"><h2>Prüfregeln</h2><ul class="chk">
+    <li>Fahrmischer/Rührwerk: Entladeende spätestens ${REGELN.zeitMischer} min nach Beladung (1. Wasserzugabe); ohne Rührwerk ${REGELN.zeitOhne} min</li>
+    <li>Wasserzugabe auf der Baustelle: nicht zulässig (rot)</li><li>Fließmittel auf der Baustelle: nur mit Vermerk auf dem Lieferschein</li>
+    <li>Frischbeton max. +${REGELN.tMax} °C, min. +${REGELN.tMin} °C; bei Luft unter ${REGELN.luftKalt} °C min. +${REGELN.tMinKalt} °C</li>
+    <li>Festigkeits-, Konsistenz- und Expositionsklassen lt. Lieferschein gegen Sortenverzeichnis</li></ul><p class="mute">Quelle: ${esc(REGELN.quelle)}. Vertragliche Regelungen können strenger sein.</p></div>`;
+  $('#ks').onclick = async () => { S.settings.apiKey = $('#key').value.trim(); S.settings.model = $('#model').value; await saveSettings(); toast('Gespeichert'); };
+  $('#kd').onclick = async () => { delete S.settings.apiKey; await saveSettings(); render(); };
+  $('#bk').onclick = async () => {
+    const out = {app: 'bauleiter-app', version: 1, stand: new Date().toISOString(), data: {}};
+    for (const s of ['projects', 'sorten', 'bauteile', 'ls', 'betonagen']) out.data[s] = await db.all(s);
+    out.data.photos = []; for (const ph of await db.all('photos')) out.data.photos.push({id: ph.id, b64: await blobToB64(ph.blob)});
+    download(`${today()}_Sicherung_Betonlieferscheine.json`, JSON.stringify(out), 'application/json');
+    S.settings.lastBackup = Date.now(); await saveSettings(); toast('Sicherung erstellt'); render();
+  };
+  $('#rs').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { const j = JSON.parse(await f.text()); if (j.app !== 'bauleiter-app') throw new Error('Keine Sicherung dieser App');
+      if (!confirm('Sicherung einspielen? Vorhandene Einträge mit gleicher Kennung werden überschrieben, andere bleiben erhalten.')) return;
+      for (const s of ['projects', 'sorten', 'bauteile', 'ls', 'betonagen']) for (const o of j.data[s] || []) await db.put(s, o);
+      for (const ph of j.data.photos || []) await db.put('photos', {id: ph.id, blob: b64ToBlob(ph.b64)});
+      await load(); toast('Sicherung eingespielt'); location.hash = '#/';
+    } catch (err) { toast('Fehler: ' + err.message); }
+  };
+}
+
+/* ================= Start ================= */
+(async () => {
+  await load();
+  if (navigator.storage?.persist) navigator.storage.persist().catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+  render();
+})();
+</script>
+</body>
+</html>
